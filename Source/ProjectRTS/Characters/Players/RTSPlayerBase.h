@@ -30,6 +30,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+	// SkeletalMesh SetLeaderPoseComponent.
+	void SetLeaderPoseComponent();
+	
+	// Input Bind Functions.
 	virtual void Move(const FInputActionValue& Value);
 	virtual void Look(const FInputActionValue& Value);
 	virtual void Jump() override;
@@ -50,7 +54,24 @@ protected:
 
 	UFUNCTION()
 	void AimingUpdate(float Alpha) const;
+
+	// Modular Part ( SkeletalMeshComponent ) - Body(Character Mesh), Arm, Head, Leg, Back, Gun.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> ArmMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> LegMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> HeadMesh;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> BackMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USkeletalMeshComponent> GunMesh;
+
+	// SpringArm, Camera Component ans Variables.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true")) 
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 
@@ -69,6 +90,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	FVector AimingCameraPosition = FVector(0.0f, 80.0f, 0.0f);
 
+	// Enhanced Input.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 	
@@ -87,17 +109,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> RightMouseInputAction;
 
+	// Player State bool variables.
 	UPROPERTY(BlueprintReadOnly)
 	uint32 bAiming : 1 = false;
 
+	// Aiming Timeline.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timeline, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCurveFloat> AimingTimelineCurveFloat; 
+	TObjectPtr<UCurveFloat> AimingTimelineCurveFloat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timeline, meta = (AllowPrivateAccess = "true"))
+	float AimingTimelineLength = 0.15f;
 
 	UPROPERTY()
 	FTimeline AimingTimeline;
 
 	FOnTimelineFloat OnAimingTimelineFloat;
 
+	// Movement Variable.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float WalkSpeed = 300.0f;
 
@@ -107,4 +135,3 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float BoosterSpeed = 1000.0f;
 };
-

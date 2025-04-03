@@ -14,6 +14,54 @@ ARTSPlayerBase::ARTSPlayerBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	ArmMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arm Mesh"));
+	LegMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Leg Mesh"));
+	HeadMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Head Mesh"));
+	BackMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Back Mesh"));
+	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
+
+	ArmMesh->SetupAttachment(GetMesh());
+	LegMesh->SetupAttachment(GetMesh());
+	HeadMesh->SetupAttachment(GetMesh());
+	BackMesh->SetupAttachment(GetMesh());
+	GunMesh->SetupAttachment(GetMesh());
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultBodyMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Body_01.SK_Body_01'"));
+	if (DefaultBodyMesh.Object)
+	{
+		GetMesh()->SetSkeletalMesh(DefaultBodyMesh.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultArmMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Arm_01.SK_Arm_01'"));
+	if (DefaultArmMesh.Object)
+	{
+		ArmMesh->SetSkeletalMesh(DefaultArmMesh.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultLegMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Leg_01.SK_Leg_01'"));
+	if (DefaultLegMesh.Object)
+	{
+		LegMesh->SetSkeletalMesh(DefaultLegMesh.Object);
+	}
+	
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultBackMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Back_01.SK_Back_01'"));
+	if (DefaultBackMesh.Object)
+	{
+		BackMesh->SetSkeletalMesh(DefaultBackMesh.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultHeadMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Head_01.SK_Head_01'"));
+	if (DefaultHeadMesh.Object)
+	{
+		HeadMesh->SetSkeletalMesh(DefaultHeadMesh.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Gun_AR.SK_Gun_AR'"));
+	if (DefaultGunMesh.Object)
+	{
+		GunMesh->SetSkeletalMesh(DefaultGunMesh.Object);
+	}
+	
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -61,7 +109,21 @@ void ARTSPlayerBase::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
-	
+
+	// SetLeaderPoseComponent.
+	SetLeaderPoseComponent();
+
+	// Timeline Settings.
+	if (AimingTimelineCurveFloat)
+	{
+		OnAimingTimelineFloat.BindUFunction(this, FName(TEXT("AimingUpdate")));
+		FOnTimelineEvent FinishEvent;
+		
+		AimingTimeline.AddInterpFloat(AimingTimelineCurveFloat, OnAimingTimelineFloat);
+		AimingTimeline.SetTimelineFinishedFunc(FinishEvent);
+		AimingTimeline.SetTimelineLength(AimingTimelineLength);
+		AimingTimeline.SetLooping(false);
+	}
 }
 
 void ARTSPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -79,17 +141,6 @@ void ARTSPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(RightMouseInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase::RightMouseTriggered);
 		EnhancedInputComponent->BindAction(RightMouseInputAction, ETriggerEvent::Completed, this, &ARTSPlayerBase::RightMouseCompleted);
 	}
-
-	if (AimingTimelineCurveFloat)
-	{
-		OnAimingTimelineFloat.BindUFunction(this, FName(TEXT("AimingUpdate")));
-		FOnTimelineEvent FinishEvent;
-		
-		AimingTimeline.AddInterpFloat(AimingTimelineCurveFloat, OnAimingTimelineFloat);
-		AimingTimeline.SetTimelineFinishedFunc(FinishEvent);
-		AimingTimeline.SetTimelineLength(0.15f);
-		AimingTimeline.SetLooping(false);
-	}
 }
 
 void ARTSPlayerBase::Tick(float DeltaTime)
@@ -97,6 +148,18 @@ void ARTSPlayerBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	AimingTimeline.TickTimeline(DeltaTime);
+}
+
+void ARTSPlayerBase::SetLeaderPoseComponent()
+{
+	if (USkeletalMeshComponent* Body = GetMesh())
+	{
+		ArmMesh->SetLeaderPoseComponent(Body);
+		LegMesh->SetLeaderPoseComponent(Body);
+		HeadMesh->SetLeaderPoseComponent(Body);
+		BackMesh->SetLeaderPoseComponent(Body);
+		GunMesh->SetLeaderPoseComponent(Body);
+	}
 }
 
 void ARTSPlayerBase::Move(const FInputActionValue& Value)
