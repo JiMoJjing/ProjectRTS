@@ -29,6 +29,12 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	bool IsAiming() const { return bIsAiming; }
+
+	bool IsBooster() const { return bIsBooster; }
+
+	bool TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread = false);
+
 protected:
 	// SkeletalMesh SetLeaderPoseComponent.
 	void SetLeaderPoseComponent();
@@ -111,8 +117,11 @@ protected:
 
 	// Player State bool variables.
 	UPROPERTY(BlueprintReadOnly)
-	uint32 bAiming : 1 = false;
-
+	uint32 bIsAiming : 1 = false;
+	
+	UPROPERTY(BlueprintReadOnly)
+	uint32 bIsBooster : 1 = false;
+	
 	// Aiming Timeline.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timeline, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCurveFloat> AimingTimelineCurveFloat;
@@ -134,4 +143,10 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float BoosterSpeed = 1000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Fire, meta = (AllowPrivateAccess = "true"))
+	float MinSpreadAngle = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Fire, meta = (AllowPrivateAccess = "true"))
+	float MaxSpreadAngle = 3.0f;
 };

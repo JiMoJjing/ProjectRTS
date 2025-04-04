@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ARTSPlayerBase::ARTSPlayerBase()
 {
@@ -62,6 +63,9 @@ ARTSPlayerBase::ARTSPlayerBase()
 		GunMesh->SetSkeletalMesh(DefaultGunMesh.Object);
 	}
 	
+	// SetLeaderPoseComponent.
+	SetLeaderPoseComponent();
+	
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -110,9 +114,6 @@ void ARTSPlayerBase::BeginPlay()
 		}
 	}
 
-	// SetLeaderPoseComponent.
-	SetLeaderPoseComponent();
-
 	// Timeline Settings.
 	if (AimingTimelineCurveFloat)
 	{
@@ -148,6 +149,54 @@ void ARTSPlayerBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	AimingTimeline.TickTimeline(DeltaTime);
+}
+
+bool ARTSPlayerBase::TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread)
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		FVector2D ViewportSize;
+		if (GEngine && GEngine->GameViewport)
+		{
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+		}
+		
+		FVector2D CrosshairLocation2D = FVector2D(ViewportSize.X / 2, ViewportSize.Y / 2);
+		FVector CrosshairWorldLocation;
+		FVector CrosshairWorldRotation;
+
+		if (bUseShotSpread)
+		{
+			float SpreadAngle;
+			float SpeedSquared = GetVelocity().SizeSquared2D();
+			float MaxSpeedSquared = RunSpeed * RunSpeed;
+
+			if (SpeedSquared > (MaxSpeedSquared * 0.5f))
+			{
+				SpreadAngle = MaxSpreadAngle;
+			}
+			else
+			{
+				SpreadAngle = MinSpreadAngle;
+			}
+			
+			CrosshairWorldRotation = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(CrosshairWorldRotation, SpreadAngle);
+		}
+		
+		if (PlayerController->DeprojectScreenPositionToWorld(CrosshairLocation2D.X, CrosshairLocation2D.Y, CrosshairWorldLocation, CrosshairWorldRotation))
+		{
+			const FVector TraceStartLocation = CrosshairWorldLocation;
+			const FVector TraceEndLocation = CrosshairWorldLocation + CrosshairWorldRotation * InTraceDistance;
+
+#if WITH_EDITOR
+			DrawDebugLine(GetWorld(), TraceStartLocation, TraceEndLocation, FColor::Green, false, 3.0f, 0, 5.0f);
+#endif
+			
+			return GetWorld()->LineTraceSingleByChannel(OutHitResult, TraceStartLocation, TraceEndLocation, InTraceChannel);
+		}
+	}
+	return false;
 }
 
 void ARTSPlayerBase::SetLeaderPoseComponent()
@@ -227,7 +276,7 @@ void ARTSPlayerBase::UseMovementRotation()
 
 void ARTSPlayerBase::BeginAimingSettings()
 {
-	bAiming = true;
+	bIsAiming = true;
 	UseControlRotation();
 	SpringArmComponent->bEnableCameraLag = false;
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -237,7 +286,7 @@ void ARTSPlayerBase::BeginAimingSettings()
 
 void ARTSPlayerBase::StopAimingSettings()
 {
-	bAiming = false;
+	bIsAiming = false;
 	UseMovementRotation();
 	SpringArmComponent->bEnableCameraLag = true;
 	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
