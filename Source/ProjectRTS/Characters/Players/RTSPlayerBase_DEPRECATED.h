@@ -6,7 +6,7 @@
 #include "InputActionValue.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
-#include "RTSPlayerBase.generated.h"
+#include "RTSPlayerBase_DEPRECATED.generated.h"
 
 class UInputMappingContext;
 class UInputAction;
@@ -14,12 +14,12 @@ class UCameraComponent;
 class USpringArmComponent;
 
 UCLASS()
-class PROJECTRTS_API ARTSPlayerBase : public ACharacter
+class PROJECTRTS_API ARTSPlayerBase_DEPRECATED : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ARTSPlayerBase();
+	ARTSPlayerBase_DEPRECATED();
 
 protected:
 	virtual void BeginPlay() override;

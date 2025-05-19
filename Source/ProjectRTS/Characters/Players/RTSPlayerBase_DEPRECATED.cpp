@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RTSPlayerBase.h"
+#include "RTSPlayerBase_DEPRECATED.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
@@ -11,7 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
-ARTSPlayerBase::ARTSPlayerBase()
+ARTSPlayerBase_DEPRECATED::ARTSPlayerBase_DEPRECATED()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -101,7 +101,7 @@ ARTSPlayerBase::ARTSPlayerBase()
 	
 }
 
-void ARTSPlayerBase::BeginPlay()
+void ARTSPlayerBase_DEPRECATED::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -127,31 +127,31 @@ void ARTSPlayerBase::BeginPlay()
 	}
 }
 
-void ARTSPlayerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ARTSPlayerBase_DEPRECATED::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase::Move);
-		EnhancedInputComponent->BindAction(LookInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase::Look);
-		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Started, this, &ARTSPlayerBase::Jump);
-		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Completed, this, &ARTSPlayerBase::StopJumping);
-		EnhancedInputComponent->BindAction(LeftMouseInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase::LeftMouseTriggered);
-		EnhancedInputComponent->BindAction(LeftMouseInputAction, ETriggerEvent::Completed, this, &ARTSPlayerBase::LeftMouseCompleted);
-		EnhancedInputComponent->BindAction(RightMouseInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase::RightMouseTriggered);
-		EnhancedInputComponent->BindAction(RightMouseInputAction, ETriggerEvent::Completed, this, &ARTSPlayerBase::RightMouseCompleted);
+		EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase_DEPRECATED::Move);
+		EnhancedInputComponent->BindAction(LookInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase_DEPRECATED::Look);
+		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Started, this, &ARTSPlayerBase_DEPRECATED::Jump);
+		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Completed, this, &ARTSPlayerBase_DEPRECATED::StopJumping);
+		EnhancedInputComponent->BindAction(LeftMouseInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase_DEPRECATED::LeftMouseTriggered);
+		EnhancedInputComponent->BindAction(LeftMouseInputAction, ETriggerEvent::Completed, this, &ARTSPlayerBase_DEPRECATED::LeftMouseCompleted);
+		EnhancedInputComponent->BindAction(RightMouseInputAction, ETriggerEvent::Triggered, this, &ARTSPlayerBase_DEPRECATED::RightMouseTriggered);
+		EnhancedInputComponent->BindAction(RightMouseInputAction, ETriggerEvent::Completed, this, &ARTSPlayerBase_DEPRECATED::RightMouseCompleted);
 	}
 }
 
-void ARTSPlayerBase::Tick(float DeltaTime)
+void ARTSPlayerBase_DEPRECATED::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	AimingTimeline.TickTimeline(DeltaTime);
 }
 
-bool ARTSPlayerBase::TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread)
+bool ARTSPlayerBase_DEPRECATED::TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
@@ -199,7 +199,7 @@ bool ARTSPlayerBase::TraceToCrosshair(FHitResult& OutHitResult, float InTraceDis
 	return false;
 }
 
-void ARTSPlayerBase::SetLeaderPoseComponent()
+void ARTSPlayerBase_DEPRECATED::SetLeaderPoseComponent()
 {
 	if (USkeletalMeshComponent* Body = GetMesh())
 	{
@@ -211,7 +211,7 @@ void ARTSPlayerBase::SetLeaderPoseComponent()
 	}
 }
 
-void ARTSPlayerBase::Move(const FInputActionValue& Value)
+void ARTSPlayerBase_DEPRECATED::Move(const FInputActionValue& Value)
 {
 	FVector2D InputValue = Value.Get<FVector2D>();
 
@@ -224,7 +224,7 @@ void ARTSPlayerBase::Move(const FInputActionValue& Value)
 	AddMovementInput(RightDirection, InputValue.X);
 }
 
-void ARTSPlayerBase::Look(const FInputActionValue& Value)
+void ARTSPlayerBase_DEPRECATED::Look(const FInputActionValue& Value)
 {
 	FVector2D InputValue = Value.Get<FVector2D>();
 	
@@ -232,49 +232,49 @@ void ARTSPlayerBase::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(InputValue.Y);
 }
 
-void ARTSPlayerBase::Jump()
+void ARTSPlayerBase_DEPRECATED::Jump()
 {
 	Super::Jump();
 }
 
-void ARTSPlayerBase::StopJumping()
+void ARTSPlayerBase_DEPRECATED::StopJumping()
 {
 	Super::StopJumping();
 }
 
-void ARTSPlayerBase::LeftMouseTriggered()
+void ARTSPlayerBase_DEPRECATED::LeftMouseTriggered()
 {
 	UseControlRotation();
 }
 
-void ARTSPlayerBase::LeftMouseCompleted()
+void ARTSPlayerBase_DEPRECATED::LeftMouseCompleted()
 {
 	UseMovementRotation();
 }
 
-void ARTSPlayerBase::RightMouseTriggered()
+void ARTSPlayerBase_DEPRECATED::RightMouseTriggered()
 {
 	BeginAimingSettings();
 }
 
-void ARTSPlayerBase::RightMouseCompleted()
+void ARTSPlayerBase_DEPRECATED::RightMouseCompleted()
 {
 	StopAimingSettings();
 }
 
-void ARTSPlayerBase::UseControlRotation()
+void ARTSPlayerBase_DEPRECATED::UseControlRotation()
 {
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
-void ARTSPlayerBase::UseMovementRotation()
+void ARTSPlayerBase_DEPRECATED::UseMovementRotation()
 {
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
-void ARTSPlayerBase::BeginAimingSettings()
+void ARTSPlayerBase_DEPRECATED::BeginAimingSettings()
 {
 	bIsAiming = true;
 	UseControlRotation();
@@ -284,7 +284,7 @@ void ARTSPlayerBase::BeginAimingSettings()
 	AimingTimeline.Play();
 }
 
-void ARTSPlayerBase::StopAimingSettings()
+void ARTSPlayerBase_DEPRECATED::StopAimingSettings()
 {
 	bIsAiming = false;
 	UseMovementRotation();
@@ -294,7 +294,7 @@ void ARTSPlayerBase::StopAimingSettings()
 	AimingTimeline.Reverse();
 }
 
-void ARTSPlayerBase::AimingUpdate(float Alpha) const
+void ARTSPlayerBase_DEPRECATED::AimingUpdate(float Alpha) const
 {
 	float CurrentSpringArmLength = FMath::Lerp(DefaultSpringArmLength, AimingSpringArmLength, Alpha);
 	FVector CurrentCameraPosition = FMath::Lerp(DefaultCameraPosition, AimingCameraPosition, Alpha);

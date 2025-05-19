@@ -7,7 +7,7 @@
 #include "RTSPlayerAniminstance.generated.h"
 
 class UCharacterMovementComponent;
-class ARTSPlayerBase;
+class ARTSCharacterPlayer;
 /**
  * 
  */
@@ -24,7 +24,7 @@ protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Caching)
-	TObjectPtr<ARTSPlayerBase> RTSPlayerBase;
+	TObjectPtr<ARTSCharacterPlayer> RTSCharacterPlayer;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Caching)
 	TObjectPtr<UCharacterMovementComponent> MovementComponent;
