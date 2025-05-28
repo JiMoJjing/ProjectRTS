@@ -4,14 +4,48 @@
 #include "RTSPlayerState.h"
 
 #include "AbilitySystemComponent.h"
+#include "RTSPlayerController.h"
+#include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
 
-ARTSPlayerState::ARTSPlayerState()
+
+ARTSPlayerState::ARTSPlayerState(const FObjectInitializer& ObjectInitializer)
 {
-	ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("ASC"));
-	//ASC->SetIsReplicated(true);
+	AbilitySystemComponent = CreateDefaultSubobject<URTSAbilitySystemComponent>(TEXT("ASC"));
+	AbilitySystemComponent->SetIsReplicated(true);
+
+	NetUpdateFrequency = 100.0f;
+}
+
+ARTSPlayerController* ARTSPlayerState::GetRTSPlayerController() const
+{
+	return Cast<ARTSPlayerController>(GetOwner());
 }
 
 UAbilitySystemComponent* ARTSPlayerState::GetAbilitySystemComponent() const
 {
-	return ASC;
+	return GetRTSAbilitySystemComponent();
+}
+
+void ARTSPlayerState::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
+}
+
+void ARTSPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	check(AbilitySystemComponent);
+	AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
+
+	// @Pending: 무슨 로직인지 아직 모르겠다.
+	// UWorld* World = GetWorld();
+	// if (World && World->IsGameWorld() && World->GetNetMode() != NM_Client)
+	// {
+	// 	AGameStateBase* GameState = GetWorld()->GetGameState();
+	// 	check(GameState);
+	// 	ULyraExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<ULyraExperienceManagerComponent>();
+	// 	check(ExperienceComponent);
+	// 	ExperienceComponent->CallOrRegister_OnExperienceLoaded(FOnLyraExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
+	// }
 }

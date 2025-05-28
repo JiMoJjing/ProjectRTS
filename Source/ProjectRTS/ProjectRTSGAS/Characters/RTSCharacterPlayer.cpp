@@ -102,7 +102,6 @@ ARTSCharacterPlayer::ARTSCharacterPlayer()
 	GetCharacterMovement()->MaxFlySpeed = BoosterSpeed;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	
 }
 
 void ARTSCharacterPlayer::PossessedBy(AController* NewController)
