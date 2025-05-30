@@ -13,6 +13,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ProjectRTS/ProjectRTS.h"
+#include "ProjectRTS/RTSGameplayTag.h"
+#include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySet.h"
+#include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
+#include "ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h"
 
 ARTSCharacterPlayer::ARTSCharacterPlayer()
@@ -111,21 +115,15 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 	ARTSPlayerState* RTSPlayerState = Cast<ARTSPlayerState>(GetPlayerState());
 	if (RTSPlayerState)
 	{
-		ASC = RTSPlayerState->GetAbilitySystemComponent();
-		if (ASC)
+		// ASC 받아서 저장.
+		RTSASC = RTSPlayerState->GetRTSAbilitySystemComponent();
+		// InitAbilityActorInfo 처리.
+		if (RTSASC)
 		{
-			ASC->InitAbilityActorInfo(RTSPlayerState, this);
+			RTSASC->InitAbilityActorInfo(RTSPlayerState, this);
 		}
 
-		for (const auto& Ability : InputAbilities)
-		{
-			FGameplayAbilitySpec Spec(Ability.Value);
-			Spec.InputID = Ability.Key;
-			ASC->GiveAbility(Spec);
-		}
-
-		SetupGASInputComponent();
-
+		// 디버그 바로 보이게 설정.
 		APlayerController* PlayerController = CastChecked<APlayerController>(NewController);
 		if (PlayerController)
 		{
@@ -137,15 +135,6 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 void ARTSCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// Add Mapping Context. 
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(InputMappingContext, 0);
-		}
-	}
 
 	// Timeline Settings.
 	if (AimingTimelineCurveFloat)
@@ -160,14 +149,6 @@ void ARTSCharacterPlayer::BeginPlay()
 	}
 }
 
-void ARTSCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	SetupGASInputComponent();
-	
-}
-
 void ARTSCharacterPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -175,21 +156,53 @@ void ARTSCharacterPlayer::Tick(float DeltaTime)
 	AimingTimeline.TickTimeline(DeltaTime);
 }
 
-UAbilitySystemComponent* ARTSCharacterPlayer::GetAbilitySystemComponent() const
+void ARTSCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	return ASC;
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	// IMC등록 및 BindAction처리.
+	InitializePlayerInput(PlayerInputComponent);
+
+	// AbilitySet에 등록된 Ability들 GiveAbility 처리.
+	RegisterAbilitySet();
 }
 
-void ARTSCharacterPlayer::SetupGASInputComponent()
+void ARTSCharacterPlayer::InitializePlayerInput(UInputComponent* PlayerInputComponent)
 {
-	if (ASC && InputComponent)
+	if (RTSASC == nullptr)
 	{
-		UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+		RTS_LOG(LogRTS, Log, TEXT("%s"), TEXT("ASC is nullptr"));
+		return;
+	}
+
+	if (InputDataAsset == nullptr)
+	{
+		RTS_LOG(LogRTS, Log, TEXT("%s"), TEXT("InputDataAsset is nullptr"));
+		return;
+	}
+
+	if (InputMappingContext == nullptr)
+	{
+		RTS_LOG(LogRTS, Log, TEXT("%s"), TEXT("InputMappingContext is nullptr"));
+		return;
+	}
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
+	
+	if (URTSInputComponent* RTSInputComponent =  Cast<URTSInputComponent>(PlayerInputComponent))
+	{
+		// Ability Action Bind.
+		RTSInputComponent->BindAbilityAction(InputDataAsset, this, &ARTSCharacterPlayer::Input_AbilityInputTagPressed, &ARTSCharacterPlayer::Input_AbilityInputTagReleased);
 		
-		EnhancedInputComponent->BindAction(MoveInputAction, ETriggerEvent::Triggered, this, &ARTSCharacterPlayer::Move);
-		EnhancedInputComponent->BindAction(LookInputAction, ETriggerEvent::Triggered, this, &ARTSCharacterPlayer::Look);
-		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Started, this, &ARTSCharacterPlayer::GASInputPressed, 0);
-		EnhancedInputComponent->BindAction(JumpInputAction, ETriggerEvent::Completed, this, &ARTSCharacterPlayer::GASInputReleased, 0);
+		// Native Action Bind.
+		RTSInputComponent->BindNativeAction(InputDataAsset, RTSGameplayTag::InputTag_Move, ETriggerEvent::Triggered, this, &ARTSCharacterPlayer::Input_Move);
+		RTSInputComponent->BindNativeAction(InputDataAsset, RTSGameplayTag::InputTag_Look, ETriggerEvent::Triggered, this, &ARTSCharacterPlayer::Input_Look);
 	}
 }
 
@@ -253,7 +266,7 @@ void ARTSCharacterPlayer::SetLeaderPoseComponent()
 	}
 }
 
-void ARTSCharacterPlayer::Move(const FInputActionValue& Value)
+void ARTSCharacterPlayer::Input_Move(const FInputActionValue& Value)
 {
 	FVector2D InputValue = Value.Get<FVector2D>();
 
@@ -266,7 +279,7 @@ void ARTSCharacterPlayer::Move(const FInputActionValue& Value)
 	AddMovementInput(RightDirection, InputValue.X);
 }
 
-void ARTSCharacterPlayer::Look(const FInputActionValue& Value)
+void ARTSCharacterPlayer::Input_Look(const FInputActionValue& Value)
 {
 	FVector2D InputValue = Value.Get<FVector2D>();
 	
@@ -274,50 +287,21 @@ void ARTSCharacterPlayer::Look(const FInputActionValue& Value)
 	AddControllerPitchInput(InputValue.Y);
 }
 
-
-void ARTSCharacterPlayer::GASInputPressed(int32 InputID)
+void ARTSCharacterPlayer::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	if (ASC == nullptr)
+	if (RTSASC)
 	{
-		RTS_LOG(LogRTS, Log, TEXT("%s"), TEXT("ASC is nullptr!"));
-		return;
-	}
-	
-	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputID);
-	if (Spec)
-	{
-		Spec->InputPressed = true;
-
-		if (Spec->IsActive())
-		{
-			ASC->AbilitySpecInputPressed(*Spec);
-		}
-		else
-		{
-			ASC->TryActivateAbility(Spec->Handle);
-		}
+		RTSASC->AbilityInputTagPressed(InputTag);
 	}
 }
 
-void ARTSCharacterPlayer::GASInputReleased(int32 InputID)
+void ARTSCharacterPlayer::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (ASC == nullptr)
+	if (RTSASC)
 	{
-		RTS_LOG(LogRTS, Log, TEXT("%s"), TEXT("ASC is nullptr!"));
-		return;
-	}
-	
-	FGameplayAbilitySpec* Spec = ASC->FindAbilitySpecFromInputID(InputID);
-	if (Spec)
-	{
-		Spec->InputPressed = false;
-		if (Spec->IsActive())
-		{
-			ASC->AbilitySpecInputReleased(*Spec);
-		}
+		RTSASC->AbilityInputTagReleased(InputTag);
 	}
 }
-
 
 void ARTSCharacterPlayer::UseControlRotation()
 {
@@ -331,9 +315,8 @@ void ARTSCharacterPlayer::UseMovementRotation()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
-void ARTSCharacterPlayer::BeginAimingSettings()
+void ARTSCharacterPlayer::StartAiming()
 {
-	bIsAiming = true;
 	UseControlRotation();
 	SpringArmComponent->bEnableCameraLag = false;
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -341,14 +324,21 @@ void ARTSCharacterPlayer::BeginAimingSettings()
 	AimingTimeline.Play();
 }
 
-void ARTSCharacterPlayer::StopAimingSettings()
+void ARTSCharacterPlayer::StopAiming()
 {
-	bIsAiming = false;
 	UseMovementRotation();
 	SpringArmComponent->bEnableCameraLag = true;
 	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 
 	AimingTimeline.Reverse();
+}
+
+void ARTSCharacterPlayer::RegisterAbilitySet()
+{
+	if (AbilitySet && RTSASC)
+	{
+		AbilitySet->GiveToAbilitySystem(RTSASC);
+	}
 }
 
 void ARTSCharacterPlayer::AimingUpdate(float Alpha) const
@@ -358,6 +348,4 @@ void ARTSCharacterPlayer::AimingUpdate(float Alpha) const
 
 	SpringArmComponent->TargetArmLength = CurrentSpringArmLength;
 	CameraComponent->SetRelativeLocation(CurrentCameraPosition);
-
-	UE_LOG(LogTemp, Warning, TEXT("AimingUpdate"));
 }

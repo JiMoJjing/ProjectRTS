@@ -20,9 +20,7 @@ class PROJECTRTS_API URTSInputComponent : public UEnhancedInputComponent
 	GENERATED_BODY()
 
 public:
-	URTSInputComponent();
-	
-	URTSInputComponent(const FObjectInitializer* ObjectInitializer);
+	URTSInputComponent(const FObjectInitializer& ObjectInitializer);
 
 	template<class UserClass, typename FuncType>
 	void BindNativeAction(const URTSInputDataAsset* InputDataAsset, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func);

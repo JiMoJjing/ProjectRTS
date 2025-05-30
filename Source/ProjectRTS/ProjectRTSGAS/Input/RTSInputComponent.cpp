@@ -1,11 +1,9 @@
 ﻿
 #include "RTSInputComponent.h"
 
-URTSInputComponent::URTSInputComponent()
-{
-}
+#include UE_INLINE_GENERATED_CPP_BY_NAME(RTSInputComponent)
 
-URTSInputComponent::URTSInputComponent(const FObjectInitializer* ObjectInitializer)
+URTSInputComponent::URTSInputComponent(const FObjectInitializer& ObjectInitializer)
 {
 
 }

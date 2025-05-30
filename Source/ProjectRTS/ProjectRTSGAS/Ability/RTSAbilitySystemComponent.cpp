@@ -2,8 +2,7 @@
 
 #include "RTSAbilitySystemComponent.h"
 
-
-
+#include "ProjectRTS/ProjectRTS.h"
 
 
 URTSAbilitySystemComponent::URTSAbilitySystemComponent(const FObjectInitializer& ObjectInitializer)
@@ -15,6 +14,7 @@ URTSAbilitySystemComponent::URTSAbilitySystemComponent(const FObjectInitializer&
 
 void URTSAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
+	
 	if (InputTag.IsValid())
 	{
 		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
@@ -50,7 +50,7 @@ void URTSAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGame
 	// {
 	// 	ClearAbilityInput();
 	// 	return;
-	// } 
+	// }
 
 	static TArray<FGameplayAbilitySpecHandle> AbilitiesToActivate;
 	AbilitiesToActivate.Reset();

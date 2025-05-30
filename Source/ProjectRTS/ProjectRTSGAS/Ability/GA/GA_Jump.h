@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "RTSGA_Jump.generated.h"
+#include "GA_Jump.generated.h"
 
 /**
  * Author		: 지용현
@@ -15,12 +15,12 @@
  *					URTSAT_JumpAndWaitForLanding에 선언된 DELEGATE를 통해 콜백을 받아 EndAbility를 한다.
  */
 UCLASS()
-class PROJECTRTS_API URTSGA_Jump : public UGameplayAbility
+class PROJECTRTS_API UGA_Jump : public UGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	URTSGA_Jump();
+	UGA_Jump();
 
 	// 점프의 사용 가능 조건 설정.
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;

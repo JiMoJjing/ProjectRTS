@@ -13,22 +13,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23d00d69-7460-45f2-b24c-0372cb8c2db7" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputDataAsset.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputDataAsset.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Aiming.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Aiming.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/RTSGameplayTag.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/RTSGameplayTag.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectRTS/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectRTS/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_GameModeBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_GameModeBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/VFX/NS_DamageNumbers.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/VFX/NS_DamageNumbers.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_Player.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_Player.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_RTSPlayer.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/IMC_Player.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Blueprints/BP_RTSGASPlayer.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Blueprints/GA/BPGA_CharacterJump.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/AnimInstances/RTSPlayerAniminstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/AnimInstances/RTSPlayerAniminstance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/GA/AT/RTSAT_JumpAndWaitForLanding.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/AT/RTSAT_JumpAndWaitForLanding.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/GA/AT/RTSAT_JumpAndWaitForLanding.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/AT/RTSAT_JumpAndWaitForLanding.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/GA/RTSGA_Jump.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Jump.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/GA/RTSGA_Jump.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Jump.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,8 +64,10 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="cidr-memory-view://1" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/CoreNetTypes.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectGlobals.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/Character.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/GameplayTasks/Classes/GameplayTask.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -68,22 +80,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;C/C++ 프로젝트.ProjectRTS.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "C/C++ 프로젝트.ProjectRTS.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="C/C++ 프로젝트.ProjectRTS">
     <configuration name="ProjectRTS" type="CppProject" factoryName="C++ Project">
       <configuration_1 setup="1">
@@ -213,7 +225,12 @@
       <workItem from="1748397518672" duration="4163000" />
       <workItem from="1748409069744" duration="7747000" />
       <workItem from="1748423165691" duration="1395000" />
-      <workItem from="1748473361624" duration="577000" />
+      <workItem from="1748473361624" duration="1717000" />
+      <workItem from="1748477599967" duration="11653000" />
+      <workItem from="1748502822107" duration="4694000" />
+      <workItem from="1748562572166" duration="12976000" />
+      <workItem from="1748585838154" duration="1405000" />
+      <workItem from="1748587330417" duration="9545000" />
     </task>
     <task id="LOCAL-00001" summary="25.05.19&#10;- RTSPlayerState 생성, ASC 추가하고 캐릭터에도 ASC 추가 및 적용&#10;- 캐릭터에 GA 입력으로 실행하는 함수 생성 및 구현&#10;- GA로 캐릭터의 점프 구현 및 태그 부여&#10;- 캐릭터에 GA부여하고 인풋 바인드 처리(지금은 Jump만 있음)">
       <option name="closed" value="true" />
@@ -231,7 +248,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747989128253</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="25.05.28&#10;- RTSAbilitySystemComponent 생성&#10;- RTSPlayerState 수정&#10;- RTSPlayerController 생성&#10;- RTSInputComponent 생성&#10;- RTSInputDataAsset 생성&#10;- RTSAttributeSet 생성">
+      <option name="closed" value="true" />
+      <created>1748474257776</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1748474257776</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -254,7 +279,8 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="25.05.19&#10;- RTSPlayerState 생성, ASC 추가하고 캐릭터에도 ASC 추가 및 적용&#10;- 캐릭터에 GA 입력으로 실행하는 함수 생성 및 구현&#10;- GA로 캐릭터의 점프 구현 및 태그 부여&#10;- 캐릭터에 GA부여하고 인풋 바인드 처리(지금은 Jump만 있음)" />
     <MESSAGE value="25.05.23 업로드용 커밋" />
-    <option name="LAST_COMMIT_MESSAGE" value="25.05.23 업로드용 커밋" />
+    <MESSAGE value="25.05.28&#10;- RTSAbilitySystemComponent 생성&#10;- RTSPlayerState 수정&#10;- RTSPlayerController 생성&#10;- RTSInputComponent 생성&#10;- RTSInputDataAsset 생성&#10;- RTSAttributeSet 생성" />
+    <option name="LAST_COMMIT_MESSAGE" value="25.05.28&#10;- RTSAbilitySystemComponent 생성&#10;- RTSPlayerState 수정&#10;- RTSPlayerController 생성&#10;- RTSInputComponent 생성&#10;- RTSInputDataAsset 생성&#10;- RTSAttributeSet 생성" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

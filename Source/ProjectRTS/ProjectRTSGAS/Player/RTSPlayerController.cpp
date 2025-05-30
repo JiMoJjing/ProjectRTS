@@ -4,6 +4,7 @@
 #include "RTSPlayerController.h"
 
 #include "RTSPlayerState.h"
+#include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
 
 ARTSPlayerController::ARTSPlayerController(const FObjectInitializer& ObjectInitializer)

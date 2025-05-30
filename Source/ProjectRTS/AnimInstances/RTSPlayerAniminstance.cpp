@@ -41,8 +41,8 @@ void URTSPlayerAniminstance::NativeUpdateAnimation(float DeltaSeconds)
 	GroundSpeed = Velocity.Size2D();
 	bIsMove = GroundSpeed > 3.0f;
 	bIsFalling = MovementComponent->IsFalling();
-	bIsAiming = RTSCharacterPlayer->IsAiming();
-	bIsBooster = RTSCharacterPlayer->IsBooster();
+	//bIsAiming = RTSCharacterPlayer->IsAiming();
+	//bIsBooster = RTSCharacterPlayer->IsBooster();
 
 	FVector LastInputVector = MovementComponent->GetLastInputVector();
 	FVector VelocityXY = FVector(Velocity.X, Velocity.Y, 0.0f);

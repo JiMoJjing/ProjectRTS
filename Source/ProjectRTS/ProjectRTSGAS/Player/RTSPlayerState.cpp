@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "RTSPlayerController.h"
+#include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
 
 
@@ -36,7 +37,10 @@ void ARTSPlayerState::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	check(AbilitySystemComponent);
+
+	// @Why: GetPawn 이 Nullptr임.
 	AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
+	
 
 	// @Pending: 무슨 로직인지 아직 모르겠다.
 	// UWorld* World = GetWorld();
