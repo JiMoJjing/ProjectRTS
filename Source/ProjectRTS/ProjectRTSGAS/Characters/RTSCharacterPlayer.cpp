@@ -16,6 +16,7 @@
 #include "ProjectRTS/RTSGameplayTag.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySet.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
+#include "ProjectRTS/ProjectRTSGAS/Animation/RTSAnimInstance.h"
 #include "ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h"
 
@@ -111,7 +112,7 @@ ARTSCharacterPlayer::ARTSCharacterPlayer()
 void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	
 	ARTSPlayerState* RTSPlayerState = Cast<ARTSPlayerState>(GetPlayerState());
 	if (RTSPlayerState)
 	{
@@ -121,6 +122,12 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 		if (RTSASC)
 		{
 			RTSASC->InitAbilityActorInfo(RTSPlayerState, this);
+
+			// RTSAnimInstance에 ASC 세팅.
+			if (URTSAnimInstance* RTSAnimInstance = Cast<URTSAnimInstance>(GetMesh()->GetAnimInstance()))
+			{
+				RTSAnimInstance->InitializeWithAbilitySystem(RTSASC);
+			}		
 		}
 
 		// 디버그 바로 보이게 설정.
@@ -130,6 +137,11 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 			PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 		}
 	}
+}
+
+UAbilitySystemComponent* ARTSCharacterPlayer::GetAbilitySystemComponent() const
+{
+	return RTSASC;
 }
 
 void ARTSCharacterPlayer::BeginPlay()
@@ -285,6 +297,13 @@ void ARTSCharacterPlayer::Input_Look(const FInputActionValue& Value)
 	
 	AddControllerYawInput(InputValue.X);
 	AddControllerPitchInput(InputValue.Y);
+	UENUM(BlueprintType)
+	enum class EWeaponClass : uint8
+	{
+		Punch UMETA(DisplayName = "Punch"),
+		Gun UMETA(DisplayName = "Gun"),
+		Knife UMETA(DisplayName = "Knife")
+	};
 }
 
 void ARTSCharacterPlayer::Input_AbilityInputTagPressed(FGameplayTag InputTag)

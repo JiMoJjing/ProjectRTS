@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "RTSPlayerAniminstance.generated.h"
+#include "RTSPlayerAniminstance_DEPRECATED.generated.h"
 
 class UCharacterMovementComponent;
 class ARTSCharacterPlayer;
@@ -12,12 +12,12 @@ class ARTSCharacterPlayer;
  * 
  */
 UCLASS()
-class PROJECTRTS_API URTSPlayerAniminstance : public UAnimInstance
+class PROJECTRTS_API URTSPlayerAniminstance_DEPRECATED : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
-	URTSPlayerAniminstance();
+	URTSPlayerAniminstance_DEPRECATED();
 	
 protected:
 	virtual void NativeInitializeAnimation() override;

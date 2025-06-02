@@ -72,7 +72,6 @@ public:
 	void GiveToAbilitySystem(URTSAbilitySystemComponent* RTSASC, UObject* SourceObject = nullptr) const;
 
 protected:
-
 	// Gameplay abilities to grant when this ability set is granted.
 	UPROPERTY(EditDefaultsOnly, Category = "Gameplay Abilities", meta=(TitleProperty=Ability))
 	TArray<FRTSAbilitySet_GameplayAbility> GrantedGameplayAbilities;

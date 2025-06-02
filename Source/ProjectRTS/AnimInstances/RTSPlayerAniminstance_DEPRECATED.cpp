@@ -1,17 +1,17 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RTSPlayerAniminstance.h"
+#include "RTSPlayerAniminstance_DEPRECATED.h"
 
 #include "KismetAnimationLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h"
 
-URTSPlayerAniminstance::URTSPlayerAniminstance()
+URTSPlayerAniminstance_DEPRECATED::URTSPlayerAniminstance_DEPRECATED()
 {
 }
 
-void URTSPlayerAniminstance::NativeInitializeAnimation()
+void URTSPlayerAniminstance_DEPRECATED::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
@@ -22,7 +22,7 @@ void URTSPlayerAniminstance::NativeInitializeAnimation()
 	}
 }
 
-void URTSPlayerAniminstance::NativeUpdateAnimation(float DeltaSeconds)
+void URTSPlayerAniminstance_DEPRECATED::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 

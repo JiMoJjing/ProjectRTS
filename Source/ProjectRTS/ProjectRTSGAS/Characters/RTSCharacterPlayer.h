@@ -19,6 +19,7 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 
+
 /**
  * Author		: 지용현
  * Date			: 2025.05.30
@@ -29,14 +30,15 @@ class USpringArmComponent;
  */
 
 UCLASS()
-class PROJECTRTS_API ARTSCharacterPlayer : public ACharacter
+class PROJECTRTS_API ARTSCharacterPlayer : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	ARTSCharacterPlayer();
-	
+
 	virtual void PossessedBy(AController* NewController) override;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,10 +48,6 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	void InitializePlayerInput(UInputComponent* PlayerInputComponent);
-
-	//@Todo: These may be GameplayTag.
-	// FORCEINLINE bool IsAiming() const { return bIsAiming; }
-	// FORCEINLINE bool IsBooster() const { return bIsBooster; }
 
 	//@Todo: Make GameplayAbility.
 	bool TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread = false);
@@ -139,14 +137,6 @@ protected:
 	TObjectPtr<URTSAbilitySet> AbilitySet;
 	// ~GameplayAbilitySystem ============================
 
-	
-	// PlayerCharacter behavior flag bool variables.
-	//@Todo: Make this GameplayTag.
-	UPROPERTY(BlueprintReadOnly)
-	uint32 bIsAiming : 1 = false;
-	
-	UPROPERTY(BlueprintReadOnly)
-	uint32 bIsBooster : 1 = false;
 	
 	// Aiming Timeline.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timeline, meta = (AllowPrivateAccess = "true"))
