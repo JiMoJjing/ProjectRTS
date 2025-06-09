@@ -3,50 +3,94 @@
 
 #include "GA_Jump.h"
 
-#include "AT/RTSAT_JumpAndWaitForLanding.h"
+#include "Abilities/Tasks/AbilityTask_StartAbilityState.h"
+#include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
 #include "GameFramework/Character.h"
-#include "ProjectRTS/ProjectRTS.h"
+#include "ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h"
 
-UGA_Jump::UGA_Jump()
+UGA_Jump::UGA_Jump(const FObjectInitializer& ObjectInitializer)
 {
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateNo;
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 }
 
-bool UGA_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
-	const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+bool UGA_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
-	bool Result = Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
-	if (!Result)
+	if (!ActorInfo || !ActorInfo->AvatarActor.IsValid())
 	{
 		return false;
 	}
 
-	const ACharacter* Character = Cast<ACharacter>(ActorInfo->AvatarActor.Get());
-	return (Character && Character->CanJump());
+	const ARTSCharacterPlayer* RTSCharacter = Cast<ARTSCharacterPlayer>(ActorInfo->AvatarActor.Get());
+	if (!RTSCharacter || !RTSCharacter->CanJump())
+	{
+		return false;
+	}
+
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void UGA_Jump::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	CharacterJumpStop();
+	
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void UGA_Jump::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+                               const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	URTSAT_JumpAndWaitForLanding* JumpAndWaitForLandingTask = URTSAT_JumpAndWaitForLanding::CreateTask(this);
-	JumpAndWaitForLandingTask->OnCompleted.AddDynamic(this, &UGA_Jump::OnLandedCallback);
-	JumpAndWaitForLandingTask->ReadyForActivation();
+	CharacterJumpStart();
+	UAbilityTask_StartAbilityState* StartAbilityState = UAbilityTask_StartAbilityState::StartAbilityState(this, TEXT("Jumping"), true);
+	if (StartAbilityState)
+	{
+		StartAbilityState->OnStateEnded.AddDynamic(this, &UGA_Jump::CharacterJumpStop);
+		StartAbilityState->OnStateInterrupted.AddDynamic(this, &UGA_Jump::CharacterJumpStop);
+		StartAbilityState->ReadyForActivation();
+	}
+
+	UAbilityTask_WaitInputRelease* WaitInputRelease = UAbilityTask_WaitInputRelease::WaitInputRelease(this, true);
+	if (WaitInputRelease)
+	{
+		WaitInputRelease->OnRelease.AddDynamic(this, &UGA_Jump::OnWaitInputReleasedCallback);
+		WaitInputRelease->ReadyForActivation();
+	}
 }
 
-void UGA_Jump::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo)
-{
-	ACharacter* Character = Cast<ACharacter>(ActorInfo->AvatarActor.Get());
-	Character->StopJumping();
-}
-
-void UGA_Jump::OnLandedCallback()
+void UGA_Jump::OnWaitInputReleasedCallback(float TimeHeld)
 {
 	bool bReplicateEndAbility = true;
 	bool bWasCancelled = false;
 	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+void UGA_Jump::CharacterJumpStart()
+{
+	if (ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo())
+	{
+		if (RTSCharacter->IsLocallyControlled() && !RTSCharacter->bPressedJump)
+		{
+			RTSCharacter->Jump();
+		}
+	}
+}
+
+void UGA_Jump::CharacterJumpStop()
+{
+	if (ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo())
+	{
+		if (RTSCharacter->IsLocallyControlled() && RTSCharacter->bPressedJump)
+		{
+			RTSCharacter->StopJumping();
+		}
+	}
 }

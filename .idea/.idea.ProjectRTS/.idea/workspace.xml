@@ -13,23 +13,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23d00d69-7460-45f2-b24c-0372cb8c2db7" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Animation/RTSAnimInstance.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Animation/RTSAnimInstance.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSGameplayAbility.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSGameplayAbility.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectRTS/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectRTS/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/CharacterBP/AnimModularCharacterBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/CharacterBP/AnimModularCharacterBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Animations/ABP/ABP_AR.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Animations/ABP/ABP_Player.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Animations/ABP/ABP_RTSPlayer.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_Player.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_Player.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_RTSPlayer_DEPRECATED.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_RTSPlayer_DEPRECATED.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Character/BP_RTSPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Character/BP_RTSPlayer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/AnimInstances/RTSPlayerAniminstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/AnimInstances/RTSPlayerAniminstance_DEPRECATED.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/AnimInstances/RTSPlayerAniminstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/AnimInstances/RTSPlayerAniminstance_DEPRECATED.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySet.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/RTSGameplayTag.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/RTSGameplayTag.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/GA/BPGA_Jump.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/GA/BPGA_Jump.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/AT/RTSAT_JumpAndWaitForLanding.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/AT/AT_JumpAndWaitForLanding.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/AT/RTSAT_JumpAndWaitForLanding.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/AT/AT_JumpAndWaitForLanding.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Jump.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Jump.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Jump.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GA/GA_Jump.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +47,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="cidr-memory-view://2" root0="FORCE_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://0" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/CoreNetTypes.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectGlobals.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
@@ -74,7 +66,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;C/C++ 프로젝트.ProjectRTS.executor&quot;: &quot;Run&quot;,
+    &quot;C/C++ 프로젝트.ProjectRTS.executor&quot;: &quot;Debug&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
@@ -226,7 +218,8 @@
       <workItem from="1748606153351" duration="184000" />
       <workItem from="1748606443387" duration="192000" />
       <workItem from="1748827366117" duration="7142000" />
-      <workItem from="1748841463657" duration="693000" />
+      <workItem from="1748841463657" duration="2379000" />
+      <workItem from="1749429800190" duration="11044000" />
     </task>
     <task id="LOCAL-00001" summary="25.05.19&#10;- RTSPlayerState 생성, ASC 추가하고 캐릭터에도 ASC 추가 및 적용&#10;- 캐릭터에 GA 입력으로 실행하는 함수 생성 및 구현&#10;- GA로 캐릭터의 점프 구현 및 태그 부여&#10;- 캐릭터에 GA부여하고 인풋 바인드 처리(지금은 Jump만 있음)">
       <option name="closed" value="true" />
@@ -260,7 +253,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748605690545</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="25.06.02(월)&#10;- RTSAnimInstance&#10;    - FGameplayTagBlueprintPropertyMap 활용.&#10;    - NativeInitializeAnimation() 에서 ASC 못가져오는 이슈 있었음.&#10;    - CharacterPlayer의 PossessedBy에서 PlayerState를 통해 ASC받아올 때 직접 RTSAnimInstance에 넘겨줌.&#10;    &#10;- RTSCharacterPlayer&#10;    - PossessedBy에서 RTSAnimInstance에 ASC넘겨주는 로직 추가.">
+      <option name="closed" value="true" />
+      <created>1748842518736</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1748842518736</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -285,7 +286,8 @@
     <MESSAGE value="25.05.23 업로드용 커밋" />
     <MESSAGE value="25.05.28&#10;- RTSAbilitySystemComponent 생성&#10;- RTSPlayerState 수정&#10;- RTSPlayerController 생성&#10;- RTSInputComponent 생성&#10;- RTSInputDataAsset 생성&#10;- RTSAttributeSet 생성" />
     <MESSAGE value="25.05.30(금)&#10;- RTSCharacterPlayer&#10;    - RTSASC 적용.&#10;    - RTSInputComponent 적용.&#10;    - RTSInputDataAsset 적용.&#10;    - RTSAbilitySet 적용.&#10;- RTSGameplayTag생성.&#10;- GA_Aiming생성 및 적용." />
-    <option name="LAST_COMMIT_MESSAGE" value="25.05.30(금)&#10;- RTSCharacterPlayer&#10;    - RTSASC 적용.&#10;    - RTSInputComponent 적용.&#10;    - RTSInputDataAsset 적용.&#10;    - RTSAbilitySet 적용.&#10;- RTSGameplayTag생성.&#10;- GA_Aiming생성 및 적용." />
+    <MESSAGE value="25.06.02(월)&#10;- RTSAnimInstance&#10;    - FGameplayTagBlueprintPropertyMap 활용.&#10;    - NativeInitializeAnimation() 에서 ASC 못가져오는 이슈 있었음.&#10;    - CharacterPlayer의 PossessedBy에서 PlayerState를 통해 ASC받아올 때 직접 RTSAnimInstance에 넘겨줌.&#10;    &#10;- RTSCharacterPlayer&#10;    - PossessedBy에서 RTSAnimInstance에 ASC넘겨주는 로직 추가." />
+    <option name="LAST_COMMIT_MESSAGE" value="25.06.02(월)&#10;- RTSAnimInstance&#10;    - FGameplayTagBlueprintPropertyMap 활용.&#10;    - NativeInitializeAnimation() 에서 ASC 못가져오는 이슈 있었음.&#10;    - CharacterPlayer의 PossessedBy에서 PlayerState를 통해 ASC받아올 때 직접 RTSAnimInstance에 넘겨줌.&#10;    &#10;- RTSCharacterPlayer&#10;    - PossessedBy에서 RTSAnimInstance에 ASC넘겨주는 로직 추가." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
