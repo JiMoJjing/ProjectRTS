@@ -9,7 +9,10 @@
 class ARTSCharacterPlayer;
 class ARTSPlayerController;
 /**
- * 
+ * Author		: 지용현
+ * Date			: 2025.06.09
+ * Description	: UGameplayAbility 상속받아 기능 추가한 Base GA.
+ *					이 GA 상속받아 GA 만든다.
  */
 UCLASS()
 class PROJECTRTS_API URTSGameplayAbility : public UGameplayAbility

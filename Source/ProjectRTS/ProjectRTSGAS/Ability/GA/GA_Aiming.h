@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "ProjectRTS/ProjectRTSGAS/Ability/RTSGameplayAbility.h"
 #include "GA_Aiming.generated.h"
 
 /**
@@ -13,7 +13,7 @@
  *					
  */
 UCLASS()
-class PROJECTRTS_API UGA_Aiming : public UGameplayAbility
+class PROJECTRTS_API UGA_Aiming : public URTSGameplayAbility
 {
 	GENERATED_BODY()
 

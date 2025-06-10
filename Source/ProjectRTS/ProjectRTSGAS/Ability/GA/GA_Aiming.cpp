@@ -9,14 +9,15 @@ void UGA_Aiming::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
                                  const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	ARTSCharacterPlayer* RTSPlayer = Cast<ARTSCharacterPlayer>(ActorInfo->AvatarActor.Get());
-	if (RTSPlayer)
+	
+	ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo();
+	if (RTSCharacter)
 	{
-		RTSPlayer->StartAiming();
+		RTSCharacter->StartAiming();
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("RTSPlayer is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("RTSCharacter is nullptr"));
 	}
 }
 
@@ -34,15 +35,15 @@ void UGA_Aiming::InputReleased(const FGameplayAbilitySpecHandle Handle, const FG
 void UGA_Aiming::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	ARTSCharacterPlayer* RTSPlayer = Cast<ARTSCharacterPlayer>(ActorInfo->AvatarActor.Get());
-	if (RTSPlayer)
+	ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo();
+	if (RTSCharacter)
 	{
-		RTSPlayer->StopAiming();
+		RTSCharacter->StopAiming();
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("RTSPlayer is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("RTSCharacter is nullptr"));
 	}
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
