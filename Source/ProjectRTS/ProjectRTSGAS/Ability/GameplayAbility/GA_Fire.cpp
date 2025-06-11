@@ -5,9 +5,10 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "EditorCategoryUtils.h"
+#include "GameplayCueFunctionLibrary.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "ProjectRTS/Physics/RTSCollisionChannel.h"
+#include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h"
 
 UGA_Fire::UGA_Fire(const FObjectInitializer& ObjectInitializer)
@@ -68,6 +69,34 @@ void UGA_Fire::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGamepl
 		ASC->ConsumeClientReplicatedTargetData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey());
 		
 		Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	}
+}
+
+void UGA_Fire::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo)
+{
+	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
+	ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo();
+	if (RTSCharacter)
+	{
+		RTSCharacter->UseControlRotation();
+	}
+}
+
+void UGA_Fire::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo)
+{
+	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
+	ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo();
+	URTSAbilitySystemComponent* ASC = GetRTSAbilitySystemComponentFromActorInfo();
+
+	
+	if (RTSCharacter && ASC)
+	{
+		if (!ASC->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Character.State.Aiming")))))
+		{
+			RTSCharacter->UseMovementRotation();
+		}
 	}
 }
 
@@ -180,6 +209,7 @@ void UGA_Fire::TraceBulletsInCartridge(const FFiringInput& InputData, TArray<FHi
 		// 결과가 Blocking이 아니면.
 		if (!Impact.bBlockingHit)
 		{
+			Impact.TraceStart = GetMuzzleLocation();
 			Impact.Location = EndTrace;
 			Impact.ImpactPoint = EndTrace;
 		}
@@ -195,16 +225,19 @@ FHitResult UGA_Fire::DoSingleBulletTrace(const FVector& TraceStart, const FVecto
 	// 1차 / LineTraceSingleByChannel ( TraceStart to TraceEnd ).
 	FHitResult FirstImpact;
 	bool bFirstImpactHit = GetWorld()->LineTraceSingleByChannel(FirstImpact, TraceStart, TraceEnd, RTS_TraceChannel_PlayerTraceEnemyMesh, TraceParams);
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, bFirstImpactHit ? FColor::Green : FColor::Red, false, 5.0f, 0, 1.0f);
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, bFirstImpactHit ? FColor::Green : FColor::Red, false, 5.0f, 0, 1.0f);
 
 	if (bFirstImpactHit)
 	{
 		// 2차 / SweepSingleByChannel ( SocketLocation(Muzzle) to FirstImpact.ImpactPoint ).
 		FHitResult FinalImpact;
 		const FVector MuzzleLocation = GetMuzzleLocation();
-		FVector SweepEnd = MuzzleLocation + ((FirstImpact.ImpactPoint - MuzzleLocation).GetSafeNormal()) * MaxRange;
+		FVector SweepEnd = MuzzleLocation + ((FirstImpact.ImpactPoint - MuzzleLocation).GetSafeNormal()) * FirstImpact.Distance * 1.1f;
 		bool bFinalImpactHit = GetWorld()->SweepSingleByChannel(FinalImpact, MuzzleLocation, SweepEnd, FQuat::Identity, RTS_TraceChannel_PlayerTraceEnemyMesh, FCollisionShape::MakeSphere(SweepRadius), TraceParams);
-		DrawDebugLine(GetWorld(), MuzzleLocation, SweepEnd, bFinalImpactHit ? FColor::Green : FColor::Red, false, 5.0f, 0, 1.0f);
+		if (bDrawDebug)
+		{
+			DrawDebugLine(GetWorld(), MuzzleLocation, SweepEnd, bFinalImpactHit ? FColor::Green : FColor::Red, false, 5.0f, 0, 1.0f);
+		}
 
 		if (bFinalImpactHit)
 		{
@@ -281,20 +314,48 @@ void UGA_Fire::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle&
 		if (CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
 		{
 			// TargetData로 GE, GC 처리하기.
-			OnTargetDataReady(InData);
+			OnTargetDataReady(LocalTargetDataHandle);
 		}
 	}
 }
 
 void UGA_Fire::OnTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetData)
 {
-	FHitResult FirstHitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
-
-	// @Todo: 총구 이팩트 생성.
-
-	// @Todo: For문으로 순회하면서 BeamEffect GC, ImpactEffect GC,  Damage GE 적용.
-
+	if (!IsLocallyControlled())
+	{
+		return;
+	}
 	
+	URTSAbilitySystemComponent* ASC = GetRTSAbilitySystemComponentFromActorInfo();
+	check(ASC);
+	
+	// Muzzle Effect 처리.
+	FHitResult FirstHitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
+	FGameplayEffectContextHandle FirstEffectContext = ASC->MakeEffectContext();
+	FirstEffectContext.AddHitResult(FirstHitResult);
+	FGameplayCueParameters CueParameters;
+	CueParameters.EffectContext = FirstEffectContext;
+	
+	ASC->ExecuteGameplayCue(GameplayCue_MuzzleEffect, CueParameters);
+
+	// Bullet Tracer, Bullet Impact 처리.
+	uint8 TargetDataSize = TargetData.Num();
+	
+	for (uint8 ix = 0; ix < TargetDataSize; ++ix)
+	{
+		FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, ix);
+		FGameplayEffectContextHandle EffectContext = ASC->MakeEffectContext();
+		EffectContext.AddHitResult(HitResult);
+		FGameplayCueParameters Params;
+		Params.EffectContext = EffectContext;
+		
+		ASC->ExecuteGameplayCue(GameplayCue_BulletTracer, Params);
+		ASC->ExecuteGameplayCue(GameplayCue_BulletImpact, Params);
+
+		// @Todo: GameplayCue NetMulticast 해결.
+		// @Todo: AnimInstance Aiming 동기화
+		// @Todo: Damage GE처리 ( AttributeSet이 먼저 ).
+	}
 	
 }
 

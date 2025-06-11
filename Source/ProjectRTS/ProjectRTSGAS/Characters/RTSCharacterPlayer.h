@@ -64,14 +64,15 @@ protected:
 	virtual void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 	// ~InputBindFunction ========================================
 	
-	// Player Rotation Settings.
-	void UseControlRotation();
-	void UseMovementRotation();
 	
 	UFUNCTION()
 	void AimingUpdate(float Alpha) const;
 
 public:
+	// Player Rotation Settings.
+	void UseControlRotation();
+	void UseMovementRotation();
+
 	// Aiming Settings.
 	virtual void StartAiming();
 	virtual void StopAiming();

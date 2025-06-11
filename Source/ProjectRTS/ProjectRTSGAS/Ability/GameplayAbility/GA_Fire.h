@@ -7,7 +7,11 @@
 #include "GA_Fire.generated.h"
 
 /**
- * 
+ * Author		: 지용현
+ * Date			: 2025.06.10
+ * Description	: ULyraGameplayAbility_RangedWeapon 모방.
+ *					트레이스 로직 변경(에임방향으로 한번 -> 에임방향한번, 총구에서 결과로 한번).
+ *					LyraWeaponInstance로 관리하는 데이터중 필요한 것만 여기에 변수화.
  */
 UCLASS()
 class PROJECTRTS_API UGA_Fire : public URTSGameplayAbility
@@ -17,11 +21,11 @@ class PROJECTRTS_API UGA_Fire : public URTSGameplayAbility
 public:
 	UGA_Fire(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	// @Todo: ULyraRangedWeaponInstance에서 필요한 정보 가져와서 설정하기.
-
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
+	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
 protected:
 	// 함수 인자에 Trace위치, 방향 넣어줄 때 구조체로 묶어 보내줌.
@@ -90,6 +94,15 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default")
 	float FireDelayTime = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
+	FGameplayTag GameplayCue_MuzzleEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
+	FGameplayTag GameplayCue_BulletTracer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
+	FGameplayTag GameplayCue_BulletImpact;
 
 private:
 	FDelegateHandle OnTargetDataReadyCallbackDelegateHandle;

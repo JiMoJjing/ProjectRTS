@@ -134,7 +134,7 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 		APlayerController* PlayerController = CastChecked<APlayerController>(NewController);
 		if (PlayerController)
 		{
-			PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
+			//PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 		}
 	}
 }
