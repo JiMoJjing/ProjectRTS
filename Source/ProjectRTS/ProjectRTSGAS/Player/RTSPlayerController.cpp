@@ -6,9 +6,11 @@
 #include "RTSPlayerState.h"
 #include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
+#include "ProjectRTS/ProjectRTSGAS/Feedback/DamageNiagaraComponent.h"
 
 ARTSPlayerController::ARTSPlayerController(const FObjectInitializer& ObjectInitializer)
 {
+	DamageNiagaraComponent = CreateDefaultSubobject<UDamageNiagaraComponent>(TEXT("DamageNiagaraComponent"));
 }
 
 ARTSPlayerState* ARTSPlayerController::GetRTSPlayerState() const

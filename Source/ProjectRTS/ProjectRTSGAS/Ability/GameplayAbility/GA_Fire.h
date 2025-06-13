@@ -104,6 +104,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
 	FGameplayTag GameplayCue_BulletImpact;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayEffect")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
+	
 private:
 	FDelegateHandle OnTargetDataReadyCallbackDelegateHandle;
 };

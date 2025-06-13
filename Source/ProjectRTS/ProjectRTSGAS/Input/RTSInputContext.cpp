@@ -1,13 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RTSInputDataAsset.h"
+#include "RTSInputContext.h"
 
-URTSInputDataAsset::URTSInputDataAsset(const FObjectInitializer& ObjectInitializer)
+URTSInputContext::URTSInputContext(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-const UInputAction* URTSInputDataAsset::FindNativeActionForTag(const FGameplayTag& InputTag) const
+const UInputAction* URTSInputContext::FindNativeActionForTag(const FGameplayTag& InputTag) const
 {
 	for (const FRTSInputAction& Action : NativeInputActions)
 	{
@@ -19,7 +19,7 @@ const UInputAction* URTSInputDataAsset::FindNativeActionForTag(const FGameplayTa
 	return nullptr;
 }
 
-const UInputAction* URTSInputDataAsset::FindAbilityActionForTag(const FGameplayTag& InputTag) const
+const UInputAction* URTSInputContext::FindAbilityActionForTag(const FGameplayTag& InputTag) const
 {
 	for (const FRTSInputAction& Action : AbilityInputActions)
 	{

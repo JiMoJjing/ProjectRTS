@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "EnhancedInputComponent.h"
-#include "RTSInputDataAsset.h"
+#include "RTSInputContext.h"
 #include "RTSInputComponent.generated.h"
 
-class URTSInputDataAsset;
+class URTSInputContext;
 
 /**
  * Author		: 지용현
@@ -23,14 +23,17 @@ public:
 	URTSInputComponent(const FObjectInitializer& ObjectInitializer);
 
 	template<class UserClass, typename FuncType>
-	void BindNativeAction(const URTSInputDataAsset* InputDataAsset, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func);
+	void BindNativeAction(const URTSInputContext* InputDataAsset, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func);
 
 	template<class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-	void BindAbilityAction(const URTSInputDataAsset* InputDataAsset, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc);
+	void BindAbilityAction(const URTSInputContext* InputDataAsset, UserClass* Object, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc);
+
+	template<class UserClass, typename FuncType>
+	void BindWeaponSwapAction(const URTSInputContext* InputDataAsset, UserClass* Object, FuncType Func);
 };
 
 template <class UserClass, typename FuncType>
-void URTSInputComponent::BindNativeAction(const URTSInputDataAsset* InputDataAsset, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func)
+void URTSInputComponent::BindNativeAction(const URTSInputContext* InputDataAsset, const FGameplayTag& InputTag, ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func)
 {
 	check(InputDataAsset);
 
@@ -41,7 +44,7 @@ void URTSInputComponent::BindNativeAction(const URTSInputDataAsset* InputDataAss
 }
 
 template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-void URTSInputComponent::BindAbilityAction(const URTSInputDataAsset* InputDataAsset, UserClass* Object,	PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc)
+void URTSInputComponent::BindAbilityAction(const URTSInputContext* InputDataAsset, UserClass* Object,	PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc)
 {
 	check(InputDataAsset);
 
@@ -59,5 +62,16 @@ void URTSInputComponent::BindAbilityAction(const URTSInputDataAsset* InputDataAs
 				BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, Action.InputTag);
 			}
 		}
+	}
+}
+
+template <class UserClass, typename FuncType>
+void URTSInputComponent::BindWeaponSwapAction(const URTSInputContext* InputDataAsset, UserClass* Object, FuncType Func)
+{
+	uint8 ArraySize = InputDataAsset->WeaponSwapInputActions.Num();
+	
+	for (uint8 ix = 0; ix < ArraySize; ++ix)
+	{
+		BindAction(InputDataAsset->WeaponSwapInputActions[ix], ETriggerEvent::Started, Object, Func, ix);
 	}
 }

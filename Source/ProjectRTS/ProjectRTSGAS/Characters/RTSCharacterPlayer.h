@@ -4,14 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "InputActionValue.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "RTSCharacterPlayer.generated.h"
 
+class URTSWeaponContext;
 class URTSAbilitySet;
-class URTSInputDataAsset;
+class URTSInputContext;
 class URTSAbilitySystemComponent;
 class UGameplayAbility;
 class UInputMappingContext;
@@ -42,15 +44,16 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	void InitializePlayerInput(UInputComponent* PlayerInputComponent);
-
-	//@Todo: Make GameplayAbility.
-	bool TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread = false);
+	void InitializeWeapon();
+	
+	// bool TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread = false);
 
 protected:
 	// SkeletalMesh SetLeaderPoseComponent.
@@ -62,6 +65,8 @@ protected:
 
 	virtual void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 	virtual void Input_AbilityInputTagReleased(FGameplayTag InputTag);
+
+	virtual void Input_WeaponSwap(uint8 WeaponIndex);
 	// ~InputBindFunction ========================================
 	
 	
@@ -73,9 +78,13 @@ public:
 	void UseControlRotation();
 	void UseMovementRotation();
 
+	void SetWalkSpeed();
+	void SetRunSpeed();
+
 	// Aiming Settings.
-	virtual void StartAiming();
-	virtual void StopAiming();
+	void StartAiming();
+	void StopAiming();
+
 
 protected:
 	// AbilitySet 등록.
@@ -96,7 +105,7 @@ protected:
 	TObjectPtr<USkeletalMeshComponent> BackMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Mesh, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<USkeletalMeshComponent> GunMesh;
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 	// ~SkeletalMesh =======================================================
 
 	
@@ -126,7 +135,7 @@ protected:
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Input", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<URTSInputDataAsset> InputDataAsset;
+	TObjectPtr<URTSInputContext> InputDataAsset;
 	// ~Input======================================================================
 
 	
@@ -152,19 +161,20 @@ protected:
 	FOnTimelineFloat OnAimingTimelineFloat;
 
 	// Movement Variable.
-	//@Todo: Make this to AttributeSet.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float WalkSpeed = 300.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	float RunSpeed = 600.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	float BoosterSpeed = 1000.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Fire, meta = (AllowPrivateAccess = "true"))
-	float MinSpreadAngle = 1.0f;
+	// GameplayTag Blueprint Property Map
+	UPROPERTY(EditAnywhere, Category = "RTS|GameplayTags")
+	FGameplayTagBlueprintPropertyMap GameplayTagPropertyMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Fire, meta = (AllowPrivateAccess = "true"))
-	float MaxSpreadAngle = 3.0f;
+	// WeaponContext.
+	UPROPERTY()
+	TObjectPtr<URTSWeaponContext> CurrentWeaponContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|WeaponContext")
+	TMap<uint8, TObjectPtr<URTSWeaponContext>> WeaponContexts;
 };

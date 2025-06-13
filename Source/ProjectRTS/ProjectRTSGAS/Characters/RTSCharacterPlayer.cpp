@@ -12,6 +12,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 #include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/RTSGameplayTag.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySet.h"
@@ -19,6 +20,7 @@
 #include "ProjectRTS/ProjectRTSGAS/Animation/RTSAnimInstance.h"
 #include "ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h"
+#include "ProjectRTS/ProjectRTSGAS/Weapon/RTSWeaponContext.h"
 
 ARTSCharacterPlayer::ARTSCharacterPlayer()
 {
@@ -28,13 +30,13 @@ ARTSCharacterPlayer::ARTSCharacterPlayer()
 	LegMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Leg Mesh"));
 	HeadMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Head Mesh"));
 	BackMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Back Mesh"));
-	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 
 	ArmMesh->SetupAttachment(GetMesh());
 	LegMesh->SetupAttachment(GetMesh());
 	HeadMesh->SetupAttachment(GetMesh());
 	BackMesh->SetupAttachment(GetMesh());
-	GunMesh->SetupAttachment(GetMesh());
+	WeaponMesh->SetupAttachment(GetMesh());
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultBodyMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Body_01.SK_Body_01'"));
 	if (DefaultBodyMesh.Object)
@@ -69,7 +71,7 @@ ARTSCharacterPlayer::ARTSCharacterPlayer()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> DefaultGunMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectRTS/Characters/Player/Mesh/ModularParts/SK_Gun_AR.SK_Gun_AR'"));
 	if (DefaultGunMesh.Object)
 	{
-		GunMesh->SetSkeletalMesh(DefaultGunMesh.Object);
+		WeaponMesh->SetSkeletalMesh(DefaultGunMesh.Object);
 	}
 	
 	// SetLeaderPoseComponent.
@@ -104,7 +106,6 @@ ARTSCharacterPlayer::ARTSCharacterPlayer()
 	GetCharacterMovement()->GroundFriction = 0.1f;
 	GetCharacterMovement()->JumpZVelocity = 500.0f;
 	GetCharacterMovement()->AirControl = 0.75f;
-	GetCharacterMovement()->MaxFlySpeed = BoosterSpeed;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -127,6 +128,7 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 			if (URTSAnimInstance* RTSAnimInstance = Cast<URTSAnimInstance>(GetMesh()->GetAnimInstance()))
 			{
 				RTSAnimInstance->InitializeWithAbilitySystem(RTSASC);
+				GameplayTagPropertyMap.Initialize(this, RTSASC);
 			}		
 		}
 
@@ -137,6 +139,9 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 			//PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 		}
 	}
+
+	// WeaponInitialize
+	InitializeWeapon();
 }
 
 UAbilitySystemComponent* ARTSCharacterPlayer::GetAbilitySystemComponent() const
@@ -159,6 +164,12 @@ void ARTSCharacterPlayer::BeginPlay()
 		AimingTimeline.SetTimelineLength(AimingTimelineLength);
 		AimingTimeline.SetLooping(false);
 	}
+}
+
+void ARTSCharacterPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 }
 
 void ARTSCharacterPlayer::Tick(float DeltaTime)
@@ -215,56 +226,90 @@ void ARTSCharacterPlayer::InitializePlayerInput(UInputComponent* PlayerInputComp
 		// Native Action Bind.
 		RTSInputComponent->BindNativeAction(InputDataAsset, RTSGameplayTag::InputTag_Move, ETriggerEvent::Triggered, this, &ARTSCharacterPlayer::Input_Move);
 		RTSInputComponent->BindNativeAction(InputDataAsset, RTSGameplayTag::InputTag_Look, ETriggerEvent::Triggered, this, &ARTSCharacterPlayer::Input_Look);
+
+		// Weapon Swap Action Bind.
+		RTSInputComponent->BindWeaponSwapAction(InputDataAsset, this, &ARTSCharacterPlayer::Input_WeaponSwap);
 	}
 }
 
-bool ARTSCharacterPlayer::TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread)
+void ARTSCharacterPlayer::InitializeWeapon()
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
+	if (WeaponContexts.Num() == 0)
 	{
-		FVector2D ViewportSize;
-		if (GEngine && GEngine->GameViewport)
-		{
-			GEngine->GameViewport->GetViewportSize(ViewportSize);
-		}
-		
-		FVector2D CrosshairLocation2D = FVector2D(ViewportSize.X / 2, ViewportSize.Y / 2);
-		FVector CrosshairWorldLocation;
-		FVector CrosshairWorldRotation;
-
-		if (bUseShotSpread)
-		{
-			float SpreadAngle;
-			float SpeedSquared = GetVelocity().SizeSquared2D();
-			float MaxSpeedSquared = RunSpeed * RunSpeed;
-
-			if (SpeedSquared > (MaxSpeedSquared * 0.5f))
-			{
-				SpreadAngle = MaxSpreadAngle;
-			}
-			else
-			{
-				SpreadAngle = MinSpreadAngle;
-			}
-			
-			CrosshairWorldRotation = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(CrosshairWorldRotation, SpreadAngle);
-		}
-		
-		if (PlayerController->DeprojectScreenPositionToWorld(CrosshairLocation2D.X, CrosshairLocation2D.Y, CrosshairWorldLocation, CrosshairWorldRotation))
-		{
-			const FVector TraceStartLocation = CrosshairWorldLocation;
-			const FVector TraceEndLocation = CrosshairWorldLocation + CrosshairWorldRotation * InTraceDistance;
-
-#if WITH_EDITOR
-			DrawDebugLine(GetWorld(), TraceStartLocation, TraceEndLocation, FColor::Green, false, 3.0f, 0, 5.0f);
-#endif
-			
-			return GetWorld()->LineTraceSingleByChannel(OutHitResult, TraceStartLocation, TraceEndLocation, InTraceChannel);
-		}
+		RTS_LOG(LogRTS, Log, TEXT("WeaponContexts is empty!"));
+		return;
 	}
-	return false;
+
+	URTSWeaponContext* NewWeaponContext = WeaponContexts[0];
+	if (NewWeaponContext)
+	{
+		// NewWeaponContext의 GA부여.
+		FGameplayAbilitySpec NewAbilitySpec(NewWeaponContext->WeaponGA);
+		NewAbilitySpec.DynamicAbilityTags.AddTag(NewWeaponContext->WeaponInputTag);
+		RTSASC->GiveAbility(NewAbilitySpec);	
+
+		// Weapon SkeletalMesh 변경.
+		if (NewWeaponContext->WeaponMesh)
+		{
+			WeaponMesh->SetSkeletalMesh(NewWeaponContext->WeaponMesh);
+		}
+
+		// LeaderPose 다시 설정.
+		SetLeaderPoseComponent();
+
+		// 무기 Enum 변경?
+
+		CurrentWeaponContext = NewWeaponContext;
+	}
 }
+
+// bool ARTSCharacterPlayer::TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread)
+// {
+// 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+// 	if (PlayerController)
+// 	{
+// 		FVector2D ViewportSize;
+// 		if (GEngine && GEngine->GameViewport)
+// 		{
+// 			GEngine->GameViewport->GetViewportSize(ViewportSize);
+// 		}
+// 		
+// 		FVector2D CrosshairLocation2D = FVector2D(ViewportSize.X / 2, ViewportSize.Y / 2);
+// 		FVector CrosshairWorldLocation;
+// 		FVector CrosshairWorldRotation;
+//
+// 		if (bUseShotSpread)
+// 		{
+// 			float SpreadAngle;
+// 			float SpeedSquared = GetVelocity().SizeSquared2D();
+// 			float MaxSpeedSquared = RunSpeed * RunSpeed;
+//
+// 			if (SpeedSquared > (MaxSpeedSquared * 0.5f))
+// 			{
+// 				SpreadAngle = MaxSpreadAngle;
+// 			}
+// 			else
+// 			{
+// 				SpreadAngle = MinSpreadAngle;
+// 			}
+// 			
+// 			CrosshairWorldRotation = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(CrosshairWorldRotation, SpreadAngle);
+// 		}
+// 		
+// 		if (PlayerController->DeprojectScreenPositionToWorld(CrosshairLocation2D.X, CrosshairLocation2D.Y, CrosshairWorldLocation, CrosshairWorldRotation))
+// 		{
+// 			const FVector TraceStartLocation = CrosshairWorldLocation;
+// 			const FVector TraceEndLocation = CrosshairWorldLocation + CrosshairWorldRotation * InTraceDistance;
+//
+// #if WITH_EDITOR
+// 			DrawDebugLine(GetWorld(), TraceStartLocation, TraceEndLocation, FColor::Green, false, 3.0f, 0, 5.0f);
+// #endif
+// 			
+// 			return GetWorld()->LineTraceSingleByChannel(OutHitResult, TraceStartLocation, TraceEndLocation, InTraceChannel);
+// 		}
+// 	}
+// 	return false;
+// }
 
 void ARTSCharacterPlayer::SetLeaderPoseComponent()
 {
@@ -274,7 +319,7 @@ void ARTSCharacterPlayer::SetLeaderPoseComponent()
 		LegMesh->SetLeaderPoseComponent(Body);
 		HeadMesh->SetLeaderPoseComponent(Body);
 		BackMesh->SetLeaderPoseComponent(Body);
-		GunMesh->SetLeaderPoseComponent(Body);
+		WeaponMesh->SetLeaderPoseComponent(Body);
 	}
 }
 
@@ -322,6 +367,57 @@ void ARTSCharacterPlayer::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 	}
 }
 
+void ARTSCharacterPlayer::Input_WeaponSwap(uint8 WeaponIndex)
+{
+	check(WeaponContexts.Contains(WeaponIndex));
+	check(RTSASC);
+	
+	URTSWeaponContext* NewWeaponContext = WeaponContexts[WeaponIndex];
+	if (NewWeaponContext == nullptr)
+	{
+		RTS_LOG(LogRTS, Log, TEXT("NewWeaponContext(Index = %d) is nullptr"), WeaponIndex);
+		return;
+	}
+	if (NewWeaponContext == CurrentWeaponContext)
+	{
+		RTS_LOG(LogRTS, Log, TEXT("NewWeaponContext == CurrentWeaponContext"));
+		return;
+	}
+
+	// CurrentWeaponContext의 GA제거.
+	if (CurrentWeaponContext)
+	{
+		FGameplayAbilitySpec* CurrentAbilitySpec = RTSASC->FindAbilitySpecFromClass(CurrentWeaponContext->WeaponGA);
+		if (CurrentAbilitySpec)
+		{
+			if (CurrentAbilitySpec->IsActive())
+			{
+				RTSASC->CancelAbilityHandle(CurrentAbilitySpec->Handle);
+			}
+		
+			RTSASC->ClearAbility(CurrentAbilitySpec->Handle);
+		}
+	}
+
+	// NewWeaponContext의 GA부여.
+	FGameplayAbilitySpec NewAbilitySpec(NewWeaponContext->WeaponGA);
+	NewAbilitySpec.DynamicAbilityTags.AddTag(NewWeaponContext->WeaponInputTag);
+	RTSASC->GiveAbility(NewAbilitySpec);	
+
+	// Weapon SkeletalMesh 변경.
+	if (NewWeaponContext->WeaponMesh)
+	{
+		WeaponMesh->SetSkeletalMesh(NewWeaponContext->WeaponMesh);
+	}
+
+	// LeaderPose 다시 설정.
+	SetLeaderPoseComponent();
+
+	// 무기 Enum 변경?
+
+	CurrentWeaponContext = NewWeaponContext;
+}
+
 void ARTSCharacterPlayer::UseControlRotation()
 {
 	bUseControllerRotationYaw = true;
@@ -334,11 +430,21 @@ void ARTSCharacterPlayer::UseMovementRotation()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
+void ARTSCharacterPlayer::SetWalkSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void ARTSCharacterPlayer::SetRunSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+}
+
 void ARTSCharacterPlayer::StartAiming()
 {
 	UseControlRotation();
+	SetWalkSpeed();
 	SpringArmComponent->bEnableCameraLag = false;
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 
 	AimingTimeline.Play();
 }
@@ -346,8 +452,8 @@ void ARTSCharacterPlayer::StartAiming()
 void ARTSCharacterPlayer::StopAiming()
 {
 	UseMovementRotation();
+	SetRunSpeed();
 	SpringArmComponent->bEnableCameraLag = true;
-	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 
 	AimingTimeline.Reverse();
 }

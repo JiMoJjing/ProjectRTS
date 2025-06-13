@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
-#include "RTSInputDataAsset.generated.h"
+#include "RTSInputContext.generated.h"
 
 class UInputAction;
 
@@ -18,7 +18,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UInputAction> InputAction = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Categories = InputTag))
 	FGameplayTag InputTag;
 };
 
@@ -28,12 +28,12 @@ public:
  * Description	: InputAction과 Tag를 묶어서 관리하는 데이터 애셋.
  */
 UCLASS()
-class PROJECTRTS_API URTSInputDataAsset : public UPrimaryDataAsset
+class PROJECTRTS_API URTSInputContext : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	URTSInputDataAsset(const FObjectInitializer& ObjectInitializer);
+	URTSInputContext(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = "RTS|Pawn")
 	const UInputAction* FindNativeActionForTag(const FGameplayTag& InputTag) const;
@@ -44,6 +44,9 @@ public:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputAction"))
 	TArray<FRTSInputAction> NativeInputActions;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputAction"))
+	TArray<TObjectPtr<UInputAction>> WeaponSwapInputActions;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputAction"))
 	TArray<FRTSInputAction> AbilityInputActions;

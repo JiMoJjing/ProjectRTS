@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "RTSPlayerController.generated.h"
 
+class UDamageNiagaraComponent;
 class URTSAbilitySystemComponent;
 class ARTSPlayerState;
 /**
@@ -28,4 +29,8 @@ public:
 	URTSAbilitySystemComponent* GetRTSAbilitySystemComponent() const;
 
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UDamageNiagaraComponent> DamageNiagaraComponent;
 };

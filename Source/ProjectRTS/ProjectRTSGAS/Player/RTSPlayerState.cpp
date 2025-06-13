@@ -7,12 +7,15 @@
 #include "RTSPlayerController.h"
 #include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
+#include "ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.h"
 
 
 ARTSPlayerState::ARTSPlayerState(const FObjectInitializer& ObjectInitializer)
 {
-	AbilitySystemComponent = CreateDefaultSubobject<URTSAbilitySystemComponent>(TEXT("ASC"));
+	AbilitySystemComponent = CreateDefaultSubobject<URTSAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
+
+	RTSAttributeSet = CreateDefaultSubobject<URTSAttributeSet>(TEXT("RTSAttributeSet"));
 
 	NetUpdateFrequency = 100.0f;
 }

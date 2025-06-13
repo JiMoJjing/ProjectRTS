@@ -80,6 +80,7 @@ void UGA_Fire::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGame
 	if (RTSCharacter)
 	{
 		RTSCharacter->UseControlRotation();
+		RTSCharacter->SetWalkSpeed();
 	}
 }
 
@@ -96,6 +97,7 @@ void UGA_Fire::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGam
 		if (!ASC->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Character.State.Aiming")))))
 		{
 			RTSCharacter->UseMovementRotation();
+			RTSCharacter->SetRunSpeed();
 		}
 	}
 }
@@ -345,7 +347,7 @@ void UGA_Fire::OnTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetD
 	{
 		FHitResult HitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, ix);
 		FGameplayEffectContextHandle EffectContext = ASC->MakeEffectContext();
-		EffectContext.AddHitResult(HitResult);
+		EffectContext.AddHitResult(HitResult);	
 		FGameplayCueParameters Params;
 		Params.EffectContext = EffectContext;
 		
@@ -353,10 +355,13 @@ void UGA_Fire::OnTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetD
 		ASC->ExecuteGameplayCue(GameplayCue_BulletImpact, Params);
 
 		// @Todo: GameplayCue NetMulticast 해결.
-		// @Todo: AnimInstance Aiming 동기화
-		// @Todo: Damage GE처리 ( AttributeSet이 먼저 ).
 	}
 	
+	// Damage GE처리(TargetData에 담긴 Data를 한번에 처리).
+	if (HasAuthority(&CurrentActivationInfo) && DamageEffectClass)
+	{
+		BP_ApplyGameplayEffectToTarget(TargetData, DamageEffectClass, 1, 1);
+	}
 }
 
 void UGA_Fire::FireComplete()

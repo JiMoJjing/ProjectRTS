@@ -39,7 +39,7 @@ public:
 
 	URTSAbilitySystemComponent* GetRTSAbilitySystemComponent() const;
 
-	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	UFUNCTION()
@@ -59,7 +59,7 @@ protected:
 
 private:
 	// 현재 체력 어트리뷰트.
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "RTS|Health", meta = (HideFromModifiers, AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "RTS|Health", meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData Health;
 
 	// 최대 체력 어트리뷰트.
@@ -79,6 +79,6 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "RTS|Health", meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData Healing;
 
-	UPROPERTY(BlueprintReadOnly, Category = "RTS|Health", meta = (HideFromModifiers, AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, Category = "RTS|Health", meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData Damage;
 };

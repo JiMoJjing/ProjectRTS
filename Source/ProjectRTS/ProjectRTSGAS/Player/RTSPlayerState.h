@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "RTSPlayerState.generated.h"
 
+class URTSAttributeSet;
 class URTSAbilitySystemComponent;
 class ARTSPlayerController;
 /**
@@ -38,4 +39,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = GAS)
 	TObjectPtr<URTSAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<URTSAttributeSet> RTSAttributeSet;
 };
