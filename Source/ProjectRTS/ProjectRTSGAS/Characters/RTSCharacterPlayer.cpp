@@ -15,11 +15,14 @@
 #include "Net/UnrealNetwork.h"
 #include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/RTSGameplayTag.h"
+#include "ProjectRTS/Physics/RTSCollisionChannel.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySet.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Animation/RTSAnimInstance.h"
+#include "ProjectRTS/ProjectRTSGAS/Attribute/RTSAmmoSet.h"
 #include "ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h"
+#include "ProjectRTS/ProjectRTSGAS/Weapon/FireEffect.h"
 #include "ProjectRTS/ProjectRTSGAS/Weapon/RTSWeaponContext.h"
 
 ARTSCharacterPlayer::ARTSCharacterPlayer()
@@ -139,7 +142,6 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 			//PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 		}
 	}
-
 	// WeaponInitialize
 	InitializeWeapon();
 }
@@ -170,6 +172,7 @@ void ARTSCharacterPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimePrope
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(ARTSCharacterPlayer, CurrentWeaponType);
 }
 
 void ARTSCharacterPlayer::Tick(float DeltaTime)
@@ -257,9 +260,13 @@ void ARTSCharacterPlayer::InitializeWeapon()
 		// LeaderPose 다시 설정.
 		SetLeaderPoseComponent();
 
-		// 무기 Enum 변경?
-
+		// 무기 Enum 변경, Context갱신.
 		CurrentWeaponContext = NewWeaponContext;
+		CurrentWeaponType = NewWeaponContext->WeaponType;
+
+		// RTSAmmoSet 세팅.
+		RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetMaxAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
+		RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetCurrentAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
 	}
 }
 
@@ -371,6 +378,10 @@ void ARTSCharacterPlayer::Input_WeaponSwap(uint8 WeaponIndex)
 {
 	check(WeaponContexts.Contains(WeaponIndex));
 	check(RTSASC);
+	if (!IsLocallyControlled())
+	{
+		return;
+	}
 	
 	URTSWeaponContext* NewWeaponContext = WeaponContexts[WeaponIndex];
 	if (NewWeaponContext == nullptr)
@@ -413,9 +424,15 @@ void ARTSCharacterPlayer::Input_WeaponSwap(uint8 WeaponIndex)
 	// LeaderPose 다시 설정.
 	SetLeaderPoseComponent();
 
-	// 무기 Enum 변경?
-
+	// 처리 끝났으면 CurrentWeapon 갱신.
 	CurrentWeaponContext = NewWeaponContext;
+
+	// 무기 Enum 변경.
+	CurrentWeaponType = NewWeaponContext->WeaponType;
+
+	// RTSAmmoSet 세팅.
+	RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetMaxAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
+	RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetCurrentAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
 }
 
 void ARTSCharacterPlayer::UseControlRotation()
@@ -458,12 +475,133 @@ void ARTSCharacterPlayer::StopAiming()
 	AimingTimeline.Reverse();
 }
 
+FVector ARTSCharacterPlayer::GetMuzzleSocketLocation() const
+{
+	if (CurrentWeaponContext)
+	{
+		const FVector MuzzleSocketLocation = GetMesh()->GetSocketLocation(CurrentWeaponContext->MuzzleSocketName);
+		return MuzzleSocketLocation;
+	}
+
+	return GetActorLocation();
+}
+
+void ARTSCharacterPlayer::SpawnFireEffectActor(TArray<FVector>& InImpactPositions, TArray<FVector>& InImpactNormals)
+{
+	UWorld* World = GetWorld();
+	if (World && World->IsNetMode(ENetMode::NM_DedicatedServer))
+	{
+		return;
+	}
+
+	if (!CurrentWeaponContext)
+	{
+		return;
+	}
+	
+	TArray<FVector> ImpactPositions = InImpactPositions;
+	TArray<FVector> ImpactNormals = InImpactNormals;
+	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(WeaponTrace), false, this);
+
+	// Fake추가 여부 검사.
+	if (CurrentWeaponContext->bNeedFakeData)
+	{
+		// Fake 추가.
+		const FVector FirstImpactPosition = ImpactPositions[0];
+		const FVector SocketLocation = GetMuzzleSocketLocation();
+		
+		for (uint8 ix = 0; ix < CurrentWeaponContext->NumberOfFakeData; ++ix)
+		{
+			FVector TraceDir = FirstImpactPosition - SocketLocation;
+			TraceDir.Normalize();
+			TraceDir = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(TraceDir, 4.0f);
+			
+			const FVector TraceEnd = TraceDir * 50000.0f + SocketLocation;
+
+			FHitResult HitResult;
+			World->LineTraceSingleByChannel(HitResult, SocketLocation, TraceEnd, RTS_TraceChannel_PlayerTraceEnemyMesh, TraceParams);
+
+			if (HitResult.bBlockingHit)
+			{
+				ImpactPositions.Add(HitResult.Location);
+				ImpactNormals.Add(HitResult.Normal);
+			}
+			else
+			{
+				ImpactPositions.Add(TraceEnd);
+				ImpactNormals.Add(FVector::ZeroVector);
+			}
+		}
+	}
+
+	// FireEffectActor 생성 (3초마다 사용안했으면 재생성).
+	if (!IsValid(FireEffectActor))
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = this;
+		TSubclassOf<AFireEffect> FireEffectActorClass = CurrentWeaponContext->FireEffectActorClass;
+		FireEffectActor = World->SpawnActor<AFireEffect>(FireEffectActorClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+		if (FireEffectActor)
+		{
+			FireEffectActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+			
+			// Niagara 데이터 넘기기.
+			FireEffectActor->MuzzleNiagaraSystem = CurrentWeaponContext->MuzzleNiagara;
+			FireEffectActor->TracerNiagaraSystem = CurrentWeaponContext->TracerNiagara;
+			FireEffectActor->ImpactNiagaraSystem = CurrentWeaponContext->ImpactNiagara;
+		}
+	}
+
+	if (IsValid(FireEffectActor))
+	{
+		// MuzzlePosition 넘기기.
+		FireEffectActor->MuzzlePosition = GetMuzzleSocketLocation();
+		// Impact 데이터 넘기기.
+		FireEffectActor->ImpactPositions = ImpactPositions;
+		FireEffectActor->ImpactNormals = ImpactNormals;
+
+		// 실행.
+		FireEffectActor->Fire();
+	}
+	
+}
+
 void ARTSCharacterPlayer::RegisterAbilitySet()
 {
 	if (AbilitySet && RTSASC)
 	{
 		AbilitySet->GiveToAbilitySystem(RTSASC);
 	}
+}
+
+void ARTSCharacterPlayer::OnRep_CurrentWeaponType()
+{
+	uint8 CurrentWeaponTypeIndex = static_cast<uint8>(CurrentWeaponType) - 1;
+	if(!WeaponContexts.Contains(CurrentWeaponTypeIndex))
+	{
+		return;
+	}
+	
+	URTSWeaponContext* NewWeaponContext = WeaponContexts[CurrentWeaponTypeIndex];
+	if (!NewWeaponContext)
+	{
+		return;
+	}
+
+	// Mesh 바꾸기.
+	// Weapon SkeletalMesh 변경.
+	if (NewWeaponContext->WeaponMesh)
+	{
+		WeaponMesh->SetSkeletalMesh(NewWeaponContext->WeaponMesh);
+	}
+
+	// LeaderPose 다시 설정.
+	SetLeaderPoseComponent();
+
+	// 처리 끝났으면 CurrentWeapon 갱신.
+	CurrentWeaponContext = NewWeaponContext;
 }
 
 void ARTSCharacterPlayer::AimingUpdate(float Alpha) const

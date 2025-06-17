@@ -7,7 +7,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "ProjectRTS/ProjectRTSGAS/Feedback/DamageNiagaraComponent.h"
 
-bool UGC_CharacterDamageTaken::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
+
+bool AGC_CharacterDamageTaken::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
 	const FHitResult* HitResult = Parameters.EffectContext.GetHitResult();
 	if (!HitResult)

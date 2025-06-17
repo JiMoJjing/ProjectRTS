@@ -9,8 +9,10 @@
 #include "InputActionValue.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
+#include "ProjectRTS/ProjectRTSGAS/Weapon/RTSWeaponContext.h"
 #include "RTSCharacterPlayer.generated.h"
 
+class AFireEffect;
 class URTSWeaponContext;
 class URTSAbilitySet;
 class URTSInputContext;
@@ -85,10 +87,17 @@ public:
 	void StartAiming();
 	void StopAiming();
 
+	FVector GetMuzzleSocketLocation() const;
+	
+	void SpawnFireEffectActor(TArray<FVector>& InImpactPositions, TArray<FVector>& InImpactNormals);
 
 protected:
 	// AbilitySet 등록.
 	void RegisterAbilitySet();
+
+public:
+	UFUNCTION()
+	void OnRep_CurrentWeaponType();
 
 protected:
 	// SkeletalMesh =====================================================
@@ -175,6 +184,12 @@ protected:
 	UPROPERTY()
 	TObjectPtr<URTSWeaponContext> CurrentWeaponContext;
 
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentWeaponType)
+	EWeaponType CurrentWeaponType;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|WeaponContext")
 	TMap<uint8, TObjectPtr<URTSWeaponContext>> WeaponContexts;
+
+	UPROPERTY()
+	TObjectPtr<AFireEffect> FireEffectActor;
 };

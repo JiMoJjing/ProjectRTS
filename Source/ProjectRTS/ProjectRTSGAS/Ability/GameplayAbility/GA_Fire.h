@@ -83,9 +83,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|FireParams", meta = (ClampMin = 0.1))
 	float SpreadExponent = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|FireParams")
-	FName MuzzleSocketName;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Debug")
 	uint8 bDrawDebug : 1 = false;
 
@@ -95,15 +92,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Default")
 	float FireDelayTime = 0.1f;
 
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
+	// FGameplayTag GameplayCue_MuzzleEffect;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
+	// FGameplayTag GameplayCue_BulletTracer;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
+	// FGameplayTag GameplayCue_BulletImpact;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
-	FGameplayTag GameplayCue_MuzzleEffect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
-	FGameplayTag GameplayCue_BulletTracer;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayCueTag", meta = (Categories = GameplayCue))
-	FGameplayTag GameplayCue_BulletImpact;
-
+	FGameplayTag GameplayCue_Fire;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "WeaponData|GameplayEffect")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 	

@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "RTSPlayerState.generated.h"
 
+class URTSAmmoSet;
 class URTSAttributeSet;
 class URTSAbilitySystemComponent;
 class ARTSPlayerController;
@@ -42,4 +43,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<URTSAttributeSet> RTSAttributeSet;
+
+	UPROPERTY()
+	TObjectPtr<URTSAmmoSet> RTSAmmoSet;
 };

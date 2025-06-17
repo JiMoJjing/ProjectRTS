@@ -7,6 +7,8 @@
 #include "Engine/DataAsset.h"
 #include "RTSWeaponContext.generated.h"
 
+class AFireEffect;
+class UNiagaraSystem;
 class UGameplayAbility;
 
 UENUM(BlueprintType)
@@ -32,15 +34,40 @@ public:
 	URTSWeaponContext(const FObjectInitializer& ObjectInitializer);
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Weapon")
+	uint8 MaxAmmo = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Mesh")
 	TObjectPtr<USkeletalMesh> WeaponMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS")
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Mesh")
+	FName MuzzleSocketName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|GameplayAbility")
 	TSubclassOf<UGameplayAbility> WeaponGA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS", meta = (Categories = InputTag))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|GameplayAbility", meta = (Categories = InputTag))
 	FGameplayTag WeaponInputTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Type")
 	EWeaponType WeaponType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Niagara")
+	uint8 bNeedFakeData : 1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Niagara", meta = (EditCondition = bNeedFakeData))
+	uint8 NumberOfFakeData = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Niagara")
+	TObjectPtr<UNiagaraSystem> MuzzleNiagara;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Niagara")
+	TObjectPtr<UNiagaraSystem> TracerNiagara;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Niagara")
+	TObjectPtr<UNiagaraSystem> ImpactNiagara;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Niagara")
+	TSubclassOf<AFireEffect> FireEffectActorClass;
+	
 };

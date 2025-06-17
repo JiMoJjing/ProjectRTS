@@ -285,7 +285,7 @@ const FVector UGA_Fire::GetMuzzleLocation()
 	
 	if (RTSCharacter)
 	{
-		SocketLocation = RTSCharacter->GetMesh()->GetSocketLocation(MuzzleSocketName);
+		SocketLocation = RTSCharacter->GetMuzzleSocketLocation();
 	}
 	else
 	{
@@ -330,16 +330,19 @@ void UGA_Fire::OnTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetD
 	
 	URTSAbilitySystemComponent* ASC = GetRTSAbilitySystemComponentFromActorInfo();
 	check(ASC);
-	
-	// Muzzle Effect 처리.
-	FHitResult FirstHitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
-	FGameplayEffectContextHandle FirstEffectContext = ASC->MakeEffectContext();
-	FirstEffectContext.AddHitResult(FirstHitResult);
-	FGameplayCueParameters CueParameters;
-	CueParameters.EffectContext = FirstEffectContext;
-	
-	ASC->ExecuteGameplayCue(GameplayCue_MuzzleEffect, CueParameters);
 
+	// GC_Fire 호출.
+	FHitResult FirstHitResult = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetData, 0);
+	FGameplayCueParameters CueParameters = UGameplayCueFunctionLibrary::MakeGameplayCueParametersFromHitResult(FirstHitResult);
+	ASC->ExecuteGameplayCue(GameplayCue_Fire, CueParameters);
+
+	// Damage GE처리(TargetData에 담긴 Data를 한번에 처리).
+	if (HasAuthority(&CurrentActivationInfo) && DamageEffectClass)
+	{
+		BP_ApplyGameplayEffectToTarget(TargetData, DamageEffectClass, 1, 1);
+	}
+	
+	/*
 	// Bullet Tracer, Bullet Impact 처리.
 	uint8 TargetDataSize = TargetData.Num();
 	
@@ -351,17 +354,14 @@ void UGA_Fire::OnTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetD
 		FGameplayCueParameters Params;
 		Params.EffectContext = EffectContext;
 		
+		// @Todo: GameplayCue 최적화.
 		ASC->ExecuteGameplayCue(GameplayCue_BulletTracer, Params);
 		ASC->ExecuteGameplayCue(GameplayCue_BulletImpact, Params);
-
+	
 		// @Todo: GameplayCue NetMulticast 해결.
 	}
+	*/
 	
-	// Damage GE처리(TargetData에 담긴 Data를 한번에 처리).
-	if (HasAuthority(&CurrentActivationInfo) && DamageEffectClass)
-	{
-		BP_ApplyGameplayEffectToTarget(TargetData, DamageEffectClass, 1, 1);
-	}
 }
 
 void UGA_Fire::FireComplete()

@@ -3,17 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayCueNotify_Static.h"
+#include "GameplayCueNotify_BurstLatent.h"
 #include "GC_CharacterDamageTaken.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTRTS_API UGC_CharacterDamageTaken : public UGameplayCueNotify_Static
+class PROJECTRTS_API AGC_CharacterDamageTaken : public AGameplayCueNotify_BurstLatent
 {
 	GENERATED_BODY()
 
 public:
-	virtual bool OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const override;
+	virtual bool OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
 };

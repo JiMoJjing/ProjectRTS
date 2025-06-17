@@ -7,6 +7,7 @@
 #include "RTSPlayerController.h"
 #include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
+#include "ProjectRTS/ProjectRTSGAS/Attribute/RTSAmmoSet.h"
 #include "ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.h"
 
 
@@ -16,6 +17,7 @@ ARTSPlayerState::ARTSPlayerState(const FObjectInitializer& ObjectInitializer)
 	AbilitySystemComponent->SetIsReplicated(true);
 
 	RTSAttributeSet = CreateDefaultSubobject<URTSAttributeSet>(TEXT("RTSAttributeSet"));
+	RTSAmmoSet = CreateDefaultSubobject<URTSAmmoSet>(TEXT("RTSAmmoSet"));
 
 	NetUpdateFrequency = 100.0f;
 }

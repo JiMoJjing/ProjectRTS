@@ -13,65 +13,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="23d00d69-7460-45f2-b24c-0372cb8c2db7" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_CharacterDamageTaken.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_CharacterDamageTaken.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Enemy/RTS_EnemyBase.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Enemy/RTS_EnemyBase.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Feedback/DamageNiagaraComponent.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Feedback/DamageNiagaraComponent.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Weapon/RTSWeaponContext.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Weapon/RTSWeaponContext.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_Fire.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_Fire.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAmmoSet.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAmmoSet.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Weapon/FireEffect.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Weapon/FireEffect.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ProjectRTS/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ProjectRTS/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Animation/reload_gunMiddle_sg_Anim.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Animation/reload_gunMiddle_sg_Anim.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Mesh/InternalAnim_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Mesh/InternalAnim_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Mesh/ModularParts/Int_AssaultRifle_SK.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Mesh/ModularParts/Int_AssaultRifle_SK.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Mesh/ModularParts/Int_Pistol_SK.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ModularSciFiHeroesPolyart/Mesh/ModularParts/Int_Pistol_SK.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Animations/AnimMontage/AM_Shoot_AR.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Animations/AnimMontage/AM_Shoot_AR.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_GameModeBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_GameModeBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_Player.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_Player.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_RTSPlayer_DEPRECATED.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Blueprints/BP_RTSPlayer_DEPRECATED.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_Dash.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_Dash_W.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_Jump.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_LeftMouse.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_LeftShift.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_Look.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_Move.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_Reload.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_RightMouse.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/Characters/Player/Input/InputActions/IA_Player_Skill01.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTS/VFX/NS_DamageNumbers.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTS/VFX/NS_DamageNumbers.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/DA_AbilitySet.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/DA_AbilitySet.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/GA/BPGA_Fire.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/GA/BPGA_Fire.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/GA/BPGA_Fire_Shotgun.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Ability/GA/BPGA_Fire_Shotgun.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Animation/ABP/ABP_RTSPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Animation/ABP/ABP_RTSPlayer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Animation/ABP/ABP_RTS_AR.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Animation/ABP/ABP_RTS_AR.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Character/BP_RTSPlayer.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Character/BP_RTSPlayer.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Input/DA_PlayerInput.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Input/DA_PlayerInput.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ProjectRTSGAS/Input/IMC_Player.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ProjectRTSGAS/Input/IMC_Player.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/0/0S/16V7GXTAK7QHGG4B4BUR33.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/0/N3/0PY9X01JHZCJT102WC28AP.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/5/TF/IIBCDUD64MGK7GDXLN72TI.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/7/X7/FVH00QPLZP8WTMLTFWF7OK.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/8/73/4ER6ILENLOK4MI3TXJR9NZ.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/C/XO/89H2HFBH3LC11FRPY23MUB.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/__ExternalActors__/ThirdPerson/Maps/ThirdPersonMap/D/NA/CC0YBDN6AFIR787XM20R8I.uasset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/Physics/RTSCollisionChannel.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/Physics/RTSCollisionChannel.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayAbility/GA_Fire.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayAbility/GA_Fire.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayAbility/GA_Fire.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayAbility/GA_Fire.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_CharacterDamageTaken.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_CharacterDamageTaken.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_CharacterDamageTaken.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Ability/GameplayCue/GC_CharacterDamageTaken.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputDataAsset.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputContext.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputDataAsset.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Input/RTSInputContext.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Player/RTSPlayerState.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Weapon/RTSWeaponContext.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ProjectRTS/ProjectRTSGAS/Weapon/RTSWeaponContext.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,19 +59,18 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="cidr-memory-view://6" root0="FORCE_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://2" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files (x86)/Windows Kits/10/Include/10.0.26100.0/ucrt/corecrt_math.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Editor/ComponentVisualizers/Private/SplineGeneratorPanel.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Containers/SparseArray.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/GenericPlatform/GenericPlatformMath.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/CoreNetTypes.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectPtr.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectGlobals.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/Animation/AnimInstance.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/Components/ActorComponent.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/Engine/World.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/Controller.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/Pawn.h" root0="FORCE_HIGHLIGHTING" />
@@ -136,7 +97,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "C/C++ 프로젝트.ProjectRTS.executor": "Debug",
+    "C/C++ 프로젝트.ProjectRTS.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -301,7 +262,12 @@
       <workItem from="1749633972864" duration="6950000" />
       <workItem from="1749683594511" duration="33171000" />
       <workItem from="1749727774613" duration="250000" />
-      <workItem from="1749769267164" duration="24590000" />
+      <workItem from="1749769267164" duration="27216000" />
+      <workItem from="1749813456884" duration="976000" />
+      <workItem from="1749971849279" duration="1257000" />
+      <workItem from="1750035900549" duration="17054000" />
+      <workItem from="1750057834852" duration="8611000" />
+      <workItem from="1750116233315" duration="2516000" />
     </task>
     <task id="LOCAL-00001" summary="25.05.19&#10;- RTSPlayerState 생성, ASC 추가하고 캐릭터에도 ASC 추가 및 적용&#10;- 캐릭터에 GA 입력으로 실행하는 함수 생성 및 구현&#10;- GA로 캐릭터의 점프 구현 및 태그 부여&#10;- 캐릭터에 GA부여하고 인풋 바인드 처리(지금은 Jump만 있음)">
       <option name="closed" value="true" />
@@ -367,7 +333,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749641489443</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="25.06.12(목)&#10;- AnimInstance bool 변수 동기화 처리&#10;    - Character에서 변수 업데이트하고 AnimInstance에서 받아 처리.&#10;- AttributeSet 생성 (현재 체력, 최대 체력, 데미지 메타 어트리뷰트)&#10;- Damage처리용 GE생성(BP)&#10;- DamageGE에서 실행할 GC_CharacterDamageTaken생성&#10;- GC_CharacterDamageTaken에서 이펙트 생성 요청할 DamageNiagaraComponent 생성 및 PlayerController에 부착&#10;- 더미 클래스 생성.&#10;&#10;&#10;25.06.13(금)&#10;- 무기 스왑을 위해 무기 데이터 담은 RTSWeaponContext생성.&#10;    - WeaponSkeletalMesh&#10;    - WeaponGA&#10;    - WeaponInputTag&#10;    - WeaponType&#10;    - ...(추가예정)&#10;- 무기 스왑 Input 등록을 위해 RTSInputContext에 컨테이너 추가, RTSInputComponent에 함수 추가.&#10;- RTSCharacterPlayer에 RTSWeaponContext담을 컨테이너 추가.&#10;- Input으로 들어온 번호대로 알맞은 무기 적용되도록 바인드 함수 구현.&#10;- InitializeWeapon 함수 추가해서 기본 무기 장착하도록 함.">
+      <option name="closed" value="true" />
+      <created>1749813110989</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1749813110989</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -396,7 +370,8 @@
     <MESSAGE value="25.06.09(월)&#10;- RTSGameplayAbility 생성&#10;- GA_Jump 수정&#10;    - 커스텀 AbilityTask가 아닌 StartAbilityState, WaitInputRelease 사용.&#10;     Lyra에선 BP에서 구현한 부분을 C++로 구현." />
     <MESSAGE value="25.06.10(화)&#10;- GA_Fire (LyraGameplayAbility_RangedWeapon 참고) 생성.&#10;- LyraWeaponInstance에서 필요한 부분만  GA_Fire에 변수화.&#10;- RTSCollisionChannel 생성, 사용하는 TraceChannel을 #define으로 편하게 쓰도록 재정의." />
     <MESSAGE value="25.06.11(수)&#10;- GA_Fire 에서 Activate, InputReleased 될 때 캐릭터 회전 모드 변경.&#10;- GA_Fire 에서 TargetData로 GameplayCue 실행 처리.&#10;- GC_MuzzleEffect, GC_BulletTracer, GC_BulletImpact 생성" />
-    <option name="LAST_COMMIT_MESSAGE" value="25.06.11(수)&#10;- GA_Fire 에서 Activate, InputReleased 될 때 캐릭터 회전 모드 변경.&#10;- GA_Fire 에서 TargetData로 GameplayCue 실행 처리.&#10;- GC_MuzzleEffect, GC_BulletTracer, GC_BulletImpact 생성" />
+    <MESSAGE value="25.06.12(목)&#10;- AnimInstance bool 변수 동기화 처리&#10;    - Character에서 변수 업데이트하고 AnimInstance에서 받아 처리.&#10;- AttributeSet 생성 (현재 체력, 최대 체력, 데미지 메타 어트리뷰트)&#10;- Damage처리용 GE생성(BP)&#10;- DamageGE에서 실행할 GC_CharacterDamageTaken생성&#10;- GC_CharacterDamageTaken에서 이펙트 생성 요청할 DamageNiagaraComponent 생성 및 PlayerController에 부착&#10;- 더미 클래스 생성.&#10;&#10;&#10;25.06.13(금)&#10;- 무기 스왑을 위해 무기 데이터 담은 RTSWeaponContext생성.&#10;    - WeaponSkeletalMesh&#10;    - WeaponGA&#10;    - WeaponInputTag&#10;    - WeaponType&#10;    - ...(추가예정)&#10;- 무기 스왑 Input 등록을 위해 RTSInputContext에 컨테이너 추가, RTSInputComponent에 함수 추가.&#10;- RTSCharacterPlayer에 RTSWeaponContext담을 컨테이너 추가.&#10;- Input으로 들어온 번호대로 알맞은 무기 적용되도록 바인드 함수 구현.&#10;- InitializeWeapon 함수 추가해서 기본 무기 장착하도록 함." />
+    <option name="LAST_COMMIT_MESSAGE" value="25.06.12(목)&#10;- AnimInstance bool 변수 동기화 처리&#10;    - Character에서 변수 업데이트하고 AnimInstance에서 받아 처리.&#10;- AttributeSet 생성 (현재 체력, 최대 체력, 데미지 메타 어트리뷰트)&#10;- Damage처리용 GE생성(BP)&#10;- DamageGE에서 실행할 GC_CharacterDamageTaken생성&#10;- GC_CharacterDamageTaken에서 이펙트 생성 요청할 DamageNiagaraComponent 생성 및 PlayerController에 부착&#10;- 더미 클래스 생성.&#10;&#10;&#10;25.06.13(금)&#10;- 무기 스왑을 위해 무기 데이터 담은 RTSWeaponContext생성.&#10;    - WeaponSkeletalMesh&#10;    - WeaponGA&#10;    - WeaponInputTag&#10;    - WeaponType&#10;    - ...(추가예정)&#10;- 무기 스왑 Input 등록을 위해 RTSInputContext에 컨테이너 추가, RTSInputComponent에 함수 추가.&#10;- RTSCharacterPlayer에 RTSWeaponContext담을 컨테이너 추가.&#10;- Input으로 들어온 번호대로 알맞은 무기 적용되도록 바인드 함수 구현.&#10;- InitializeWeapon 함수 추가해서 기본 무기 장착하도록 함." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
