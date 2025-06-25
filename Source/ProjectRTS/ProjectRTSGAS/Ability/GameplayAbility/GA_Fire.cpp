@@ -9,7 +9,10 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "ProjectRTS/Physics/RTSCollisionChannel.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
+#include "ProjectRTS/ProjectRTSGAS/Attribute/RTSAmmoSet.h"
 #include "ProjectRTS/ProjectRTSGAS/Characters/RTSCharacterPlayer.h"
+#include "ProjectRTS/ProjectRTSGAS/Player/RTSPlayerController.h"
+#include "GameFramework/PlayerState.h"
 
 UGA_Fire::UGA_Fire(const FObjectInitializer& ObjectInitializer)
 {
@@ -18,17 +21,49 @@ UGA_Fire::UGA_Fire(const FObjectInitializer& ObjectInitializer)
 
 bool UGA_Fire::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
-	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+	
+	URTSAbilitySystemComponent* RTSASC = GetRTSAbilitySystemComponentFromActorInfo();
+	if (!RTSASC)
+	{
+		return false;
+	}
+
+	const URTSAmmoSet* RTSAmmoSet = RTSASC->GetSet<URTSAmmoSet>();
+	if (!RTSAmmoSet)
+	{
+		return false;
+	}
+
+	float CurrentAmmo = RTSAmmoSet->GetCurrentAmmo();
+	
+	return CurrentAmmo > 0.0f;
 }
 
 void UGA_Fire::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	if (!CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
+	{
+		bool bReplicateEndAbility = true;
+		bool bWasCancelled = true;
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, bReplicateEndAbility, bWasCancelled);
+	}
+	
 	UAbilitySystemComponent* ASC = CurrentActorInfo->AbilitySystemComponent.Get();
 	check(ASC);
 
 	if (IsLocallyControlled())
 	{
 		StartFiring();
+		
+		ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo();
+		if (RTSCharacter)
+		{
+			RTSCharacter->StartFireRecoil();
+		}
 	}
 	
 	// Bind TargetData Callback.
@@ -41,8 +76,8 @@ void UGA_Fire::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	PlayMontageAndWait->OnCancelled.AddDynamic(this, &UGA_Fire::FireComplete);
 	PlayMontageAndWait->ReadyForActivation();
 
+	
 	// Fire Delay Timer.
-	FTimerHandle FireTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &UGA_Fire::FireComplete, FireDelayTime, false);
 	
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -52,15 +87,15 @@ void UGA_Fire::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGamepl
 {
 	if (IsEndAbilityValid(Handle, ActorInfo))
 	{
-		// SCopeLockCount는 활성화 된 예측 창의 갯수라고 한다.
+		URTSAbilitySystemComponent* ASC = GetRTSAbilitySystemComponentFromActorInfo();
+		check(ASC);
+
+		// ScopeLockCount는 활성화 된 예측 창의 갯수라고 한다.
 		if (ScopeLockCount > 0)
 		{
 			WaitingToExecute.Add(FPostLockDelegate::CreateUObject(this, &ThisClass::EndAbility, Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled));
 			return;
 		}
-
-		UAbilitySystemComponent* ASC = CurrentActorInfo->AbilitySystemComponent.Get();
-		check(ASC);
 
 		// 델리게이트 제거.
 		ASC->AbilityTargetDataSetDelegate(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey()).Remove(OnTargetDataReadyCallbackDelegateHandle);
@@ -88,9 +123,9 @@ void UGA_Fire::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGam
 	const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
+	
 	ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo();
 	URTSAbilitySystemComponent* ASC = GetRTSAbilitySystemComponentFromActorInfo();
-
 	
 	if (RTSCharacter && ASC)
 	{
@@ -100,6 +135,30 @@ void UGA_Fire::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGam
 			RTSCharacter->SetRunSpeed();
 		}
 	}
+}
+
+void UGA_Fire::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
+{
+	// 회전 설정 초기화.
+	ARTSCharacterPlayer* RTSCharacter = GetRTSCharacterFromActorInfo();
+	URTSAbilitySystemComponent* ASC = GetRTSAbilitySystemComponentFromActorInfo();
+	check(ASC);
+	
+	if (RTSCharacter)
+	{
+		if (!ASC->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName(TEXT("Character.State.Aiming")))))
+		{
+			RTSCharacter->UseMovementRotation();
+			RTSCharacter->SetRunSpeed();
+		}
+	}
+	
+	if (GetWorld()->GetTimerManager().IsTimerActive(FireTimerHandle))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+	}
+
+	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
 }
 
 void UGA_Fire::StartFiring()
@@ -132,7 +191,6 @@ void UGA_Fire::StartFiring()
 		{
 			FGameplayAbilityTargetData_SingleTargetHit* NewTargetData = new FGameplayAbilityTargetData_SingleTargetHit();
 			NewTargetData->HitResult = FoundHit;
-
 			TargetData.Add(NewTargetData);
 		}
 	}
@@ -313,7 +371,7 @@ void UGA_Fire::OnTargetDataReadyCallback(const FGameplayAbilityTargetDataHandle&
 			ASC->CallServerSetReplicatedTargetData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey(), LocalTargetDataHandle, ApplicationTag, ASC->ScopedPredictionKey);
 		}
 
-		if (CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
+		//if (CommitAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
 		{
 			// TargetData로 GE, GC 처리하기.
 			OnTargetDataReady(LocalTargetDataHandle);
@@ -339,7 +397,16 @@ void UGA_Fire::OnTargetDataReady(const FGameplayAbilityTargetDataHandle& TargetD
 	// Damage GE처리(TargetData에 담긴 Data를 한번에 처리).
 	if (HasAuthority(&CurrentActivationInfo) && DamageEffectClass)
 	{
-		BP_ApplyGameplayEffectToTarget(TargetData, DamageEffectClass, 1, 1);
+		//BP_ApplyGameplayEffectToTarget(TargetData, DamageEffectClass, 1, 1);
+		FGameplayEffectContextHandle EffectContext = ASC->MakeEffectContext();
+		AActor* Source = GetAvatarActorFromActorInfo();
+		APlayerState* PS = GetRTSPlayerControllerFromActorInfo()->GetPlayerState<APlayerState>();
+		EffectContext.AddSourceObject(Source);
+		EffectContext.SetAbility(this);
+		EffectContext.AddInstigator(PS, PS);
+		
+		FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(DamageEffectClass, 1.0f, EffectContext);
+		ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, EffectSpecHandle, TargetData);
 	}
 	
 	/*

@@ -17,6 +17,8 @@ GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 class URTSAbilitySystemComponent;
 // @Pending: 쓸지 말지는 고민해보기.
 DECLARE_MULTICAST_DELEGATE_SixParams(FRTSAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float /*InCurrentHealth*/, float /*InMaxHealth*/);
+
 /**
  * 
  */
@@ -36,6 +38,7 @@ public:
 	mutable FRTSAttributeEvent OnHealthChanged;
 	mutable FRTSAttributeEvent OnMaxHealthChanged;
 	mutable FRTSAttributeEvent OnOutOfHealth;
+	mutable FOnHPChanged OnHPChanged;
 
 	URTSAbilitySystemComponent* GetRTSAbilitySystemComponent() const;
 

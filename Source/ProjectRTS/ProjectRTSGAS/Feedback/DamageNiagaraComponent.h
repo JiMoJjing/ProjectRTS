@@ -32,4 +32,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DamageNiagara")
 	FName NiagaraBoolName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DamageNiagara")
+	FName NiagaraVec2Name;
+	
 };

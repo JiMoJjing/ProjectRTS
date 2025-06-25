@@ -24,8 +24,6 @@ void UGA_Aiming::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 void UGA_Aiming::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
-
 	bool bReplicateEndAbility = true;
 	bool bWasCancelled = false;
 

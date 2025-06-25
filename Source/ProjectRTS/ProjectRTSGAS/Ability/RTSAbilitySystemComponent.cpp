@@ -14,7 +14,6 @@ URTSAbilitySystemComponent::URTSAbilitySystemComponent(const FObjectInitializer&
 
 void URTSAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
-	
 	if (InputTag.IsValid())
 	{
 		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
@@ -46,7 +45,7 @@ void URTSAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& Inp
 void URTSAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
 {
 	// @Pending: Input Blocked Tag 있으면 입력 막는 로직.
-	// if (HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked))
+	// if (HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
 	// {
 	// 	ClearAbilityInput();
 	// 	return;

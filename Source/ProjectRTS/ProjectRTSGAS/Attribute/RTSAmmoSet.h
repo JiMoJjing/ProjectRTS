@@ -13,6 +13,8 @@ GAMEPLAYATTRIBUTE_VALUE_GETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAmmoChanged, float /*CurrentAmmo*/, float /*MaxAmmo*/);
+
 /**
  * 
  */
@@ -27,9 +29,16 @@ public:
 	ATTRIBUTE_ACCESSORS(URTSAmmoSet, CurrentAmmo);
 	ATTRIBUTE_ACCESSORS(URTSAmmoSet, MaxAmmo);
 
+	mutable FOnAmmoChanged OnAmmoChanged;
+
 public:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	virtual void PreAttributeBaseChange(const FGameplayAttribute& Attribute, float& NewValue) const override;
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+
+	void ClampAttribute(const FGameplayAttribute& Attribute, float& NewValue) const;
 private:
 	UPROPERTY(BlueprintReadOnly, Category = "RTS|Ammo", meta = (AllowPrivateAccess = "true"))
 	FGameplayAttributeData CurrentAmmo;

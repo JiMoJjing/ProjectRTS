@@ -30,7 +30,10 @@ bool AGC_CharacterDamageTaken::OnExecute_Implementation(AActor* MyTarget, const 
 				UDamageNiagaraComponent* DamageNiagaraComponent = Controller->GetComponentByClass<UDamageNiagaraComponent>();
 				if (DamageNiagaraComponent)
 				{
-					DamageNiagaraComponent->AddDamageNiagaraEffect(HitResult->ImpactPoint, DamageMagnitude, false);
+					// @Todo: 크리티컬 여부 검사하는 로직 짜기.
+					bool bIsCriticalDamage = HitResult->BoneName == FName(TEXT("head"));
+					
+					DamageNiagaraComponent->AddDamageNiagaraEffect(HitResult->ImpactPoint, DamageMagnitude, bIsCriticalDamage);
 					return true;
 				}
 			}

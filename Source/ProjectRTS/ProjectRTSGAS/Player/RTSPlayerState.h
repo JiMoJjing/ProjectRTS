@@ -28,6 +28,7 @@ class PROJECTRTS_API ARTSPlayerState : public APlayerState, public IAbilitySyste
 public:
 	ARTSPlayerState(const FObjectInitializer& ObjectInitializer);
 
+
 	UFUNCTION(BlueprintCallable, Category = "RTS|PlayerState")
 	ARTSPlayerController* GetRTSPlayerController() const;
 
