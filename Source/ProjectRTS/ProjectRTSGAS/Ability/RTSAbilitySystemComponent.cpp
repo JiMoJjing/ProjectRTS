@@ -15,7 +15,6 @@ URTSAbilitySystemComponent::URTSAbilitySystemComponent(const FObjectInitializer&
 
 void URTSAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
 {
-	
 	if (InputTag.IsValid())
 	{
 		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)

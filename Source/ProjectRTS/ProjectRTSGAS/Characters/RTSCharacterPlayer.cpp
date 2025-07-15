@@ -150,16 +150,13 @@ void ARTSCharacterPlayer::PossessedBy(AController* NewController)
 		{
 			//PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 		}
-		
-		// WeaponInitialize
-		InitializeWeapon();
-		
-		// IMC등록 및 BindAction처리.
-		InitializePlayerInput(RTSPlayerController->InputComponent);
-
-		// AbilitySet에 등록된 Ability들 GiveAbility 처리.
-		RegisterAbilitySet();
 	}
+	
+	// WeaponInitialize
+	InitializeWeapon();
+
+	// AbilitySet에 등록된 Ability들 GiveAbility 처리.
+	RegisterAbilitySet();
 }
 
 UAbilitySystemComponent* ARTSCharacterPlayer::GetAbilitySystemComponent() const
@@ -194,8 +191,6 @@ void ARTSCharacterPlayer::BeginPlay()
 		RecoilTimeline.SetTimelineLength(RecoilTimelineLength);
 		RecoilTimeline.SetLooping(false);
 	}
-
-	
 }
 
 void ARTSCharacterPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -217,6 +212,8 @@ void ARTSCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
+	// IMC등록 및 BindAction처리.
+	InitializePlayerInput(GetController()->InputComponent);
 }
 
 void ARTSCharacterPlayer::InitializePlayerInput(UInputComponent* PlayerInputComponent)
@@ -225,6 +222,10 @@ void ARTSCharacterPlayer::InitializePlayerInput(UInputComponent* PlayerInputComp
 	{
 		RTS_LOG(LogRTS, Log, TEXT("%s"), TEXT("ASC is nullptr"));
 		return;
+	}
+	else if (RTSASC)
+	{
+		RTS_LOG(LogRTS, Log, TEXT("%s"), TEXT("ASC is Valid"));
 	}
 
 	if (InputDataAsset == nullptr)
@@ -273,10 +274,13 @@ void ARTSCharacterPlayer::InitializeWeapon()
 	URTSWeaponContext* NewWeaponContext = WeaponContexts[0];
 	if (NewWeaponContext)
 	{
-		// NewWeaponContext의 GA부여.
-		FGameplayAbilitySpec NewAbilitySpec(NewWeaponContext->WeaponGA);
-		NewAbilitySpec.DynamicAbilityTags.AddTag(NewWeaponContext->WeaponInputTag);
-		RTSASC->GiveAbility(NewAbilitySpec);	
+		if (HasAuthority())
+		{
+			// NewWeaponContext의 GA부여.
+			FGameplayAbilitySpec NewAbilitySpec(NewWeaponContext->WeaponGA);
+			NewAbilitySpec.DynamicAbilityTags.AddTag(NewWeaponContext->WeaponInputTag);
+			RTSASC->GiveAbility(NewAbilitySpec);	
+		}
 
 		// Weapon SkeletalMesh 변경.
 		if (NewWeaponContext->WeaponMesh)
@@ -297,53 +301,49 @@ void ARTSCharacterPlayer::InitializeWeapon()
 	}
 }
 
-// bool ARTSCharacterPlayer::TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread)
-// {
-// 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-// 	if (PlayerController)
-// 	{
-// 		FVector2D ViewportSize;
-// 		if (GEngine && GEngine->GameViewport)
-// 		{
-// 			GEngine->GameViewport->GetViewportSize(ViewportSize);
-// 		}
-// 		
-// 		FVector2D CrosshairLocation2D = FVector2D(ViewportSize.X / 2, ViewportSize.Y / 2);
-// 		FVector CrosshairWorldLocation;
-// 		FVector CrosshairWorldRotation;
-//
-// 		if (bUseShotSpread)
-// 		{
-// 			float SpreadAngle;
-// 			float SpeedSquared = GetVelocity().SizeSquared2D();
-// 			float MaxSpeedSquared = RunSpeed * RunSpeed;
-//
-// 			if (SpeedSquared > (MaxSpeedSquared * 0.5f))
-// 			{
-// 				SpreadAngle = MaxSpreadAngle;
-// 			}
-// 			else
-// 			{
-// 				SpreadAngle = MinSpreadAngle;
-// 			}
-// 			
-// 			CrosshairWorldRotation = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(CrosshairWorldRotation, SpreadAngle);
-// 		}
-// 		
-// 		if (PlayerController->DeprojectScreenPositionToWorld(CrosshairLocation2D.X, CrosshairLocation2D.Y, CrosshairWorldLocation, CrosshairWorldRotation))
-// 		{
-// 			const FVector TraceStartLocation = CrosshairWorldLocation;
-// 			const FVector TraceEndLocation = CrosshairWorldLocation + CrosshairWorldRotation * InTraceDistance;
-//
-// #if WITH_EDITOR
-// 			DrawDebugLine(GetWorld(), TraceStartLocation, TraceEndLocation, FColor::Green, false, 3.0f, 0, 5.0f);
-// #endif
-// 			
-// 			return GetWorld()->LineTraceSingleByChannel(OutHitResult, TraceStartLocation, TraceEndLocation, InTraceChannel);
-// 		}
-// 	}
-// 	return false;
-// }
+void ARTSCharacterPlayer::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	ARTSPlayerState* RTSPlayerState = Cast<ARTSPlayerState>(GetPlayerState());
+	if (RTSPlayerState)
+	{
+		// ASC 받아서 저장.
+		RTSASC = RTSPlayerState->GetRTSAbilitySystemComponent();
+
+		// InitAbilityActorInfo 처리.
+		if (RTSASC)
+		{
+			//RTSASC->InitAbilityActorInfo(RTSPlayerState, this);
+			RTSASC->RefreshAbilityActorInfo();
+			
+			// RTSAnimInstance에 ASC 세팅.
+			if (URTSAnimInstance* RTSAnimInstance = Cast<URTSAnimInstance>(GetMesh()->GetAnimInstance()))
+			{
+				RTSAnimInstance->InitializeWithAbilitySystem(RTSASC);
+				GameplayTagPropertyMap.Initialize(this, RTSASC);
+			}
+			
+			const URTSAmmoSet* RTSAmmoSet = RTSASC->GetSet<URTSAmmoSet>();
+			if (RTSAmmoSet && IsLocallyControlled())
+			{
+				RTSAmmoSet->OnAmmoChanged.AddUObject(this, &ARTSCharacterPlayer::OnAmmoChangedCallback);
+			}
+		}
+		else
+		{
+			RTS_LOG(LogRTS, Log, TEXT("NoRTSASC"));
+		}
+	}
+	// IMC등록 및 BindAction처리.
+	InitializePlayerInput(GetController()->InputComponent);
+}
+
+void ARTSCharacterPlayer::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+}
 
 void ARTSCharacterPlayer::SetLeaderPoseComponent()
 {
@@ -605,10 +605,6 @@ void ARTSCharacterPlayer::WeaponSwapAbilitySuccess(uint8 InWeaponIndex)
 {
 	check(WeaponContexts.Contains(InWeaponIndex));
 	check(RTSASC);
-	if (!IsLocallyControlled())
-	{
-		return;
-	}
 	
 	URTSWeaponContext* NewWeaponContext = WeaponContexts[InWeaponIndex];
 	if (NewWeaponContext == nullptr)
@@ -622,53 +618,59 @@ void ARTSCharacterPlayer::WeaponSwapAbilitySuccess(uint8 InWeaponIndex)
 		return;
 	}
 
-	// CurrentWeaponContext의 GA제거.
-	if (CurrentWeaponContext)
+	if (HasAuthority())
 	{
-		FGameplayAbilitySpec* CurrentAbilitySpec = RTSASC->FindAbilitySpecFromClass(CurrentWeaponContext->WeaponGA);
-		if (CurrentAbilitySpec)
+		// CurrentWeaponContext의 GA제거.
+		if (CurrentWeaponContext)
 		{
-			if (CurrentAbilitySpec->IsActive())
+			FGameplayAbilitySpec* CurrentAbilitySpec = RTSASC->FindAbilitySpecFromClass(CurrentWeaponContext->WeaponGA);
+			if (CurrentAbilitySpec)
 			{
-				RTSASC->CancelAbilityHandle(CurrentAbilitySpec->Handle);
-			}
+				if (CurrentAbilitySpec->IsActive())
+				{
+					RTSASC->CancelAbilityHandle(CurrentAbilitySpec->Handle);
+				}
 		
-			RTSASC->ClearAbility(CurrentAbilitySpec->Handle);
+				RTSASC->ClearAbility(CurrentAbilitySpec->Handle);
+			}
 		}
+
+		// NewWeaponContext의 GA부여.
+		FGameplayAbilitySpec NewAbilitySpec(NewWeaponContext->WeaponGA);
+		NewAbilitySpec.DynamicAbilityTags.AddTag(NewWeaponContext->WeaponInputTag);
+		RTSASC->GiveAbility(NewAbilitySpec);
 	}
 
-	// NewWeaponContext의 GA부여.
-	FGameplayAbilitySpec NewAbilitySpec(NewWeaponContext->WeaponGA);
-	NewAbilitySpec.DynamicAbilityTags.AddTag(NewWeaponContext->WeaponInputTag);
-	RTSASC->GiveAbility(NewAbilitySpec);	
-
-	// Weapon SkeletalMesh 변경.
-	if (NewWeaponContext->WeaponMesh)
+	if (IsLocallyControlled())
 	{
-		WeaponMesh->SetSkeletalMesh(NewWeaponContext->WeaponMesh);
+		// Weapon SkeletalMesh 변경.
+		if (NewWeaponContext->WeaponMesh)
+		{
+			WeaponMesh->SetSkeletalMesh(NewWeaponContext->WeaponMesh);
+		}
+		
+		// LeaderPose 다시 설정.
+		SetLeaderPoseComponent();
+		
+		// 처리 끝났으면 CurrentWeapon 갱신.
+		CurrentWeaponContext = NewWeaponContext;
+		
+		// 무기 Enum 변경.
+		CurrentWeaponType = NewWeaponContext->WeaponType;
+		OnWeaponTypeChanged.Broadcast(CurrentWeaponType);
+		
+		DefaultCameraPosition = CurrentWeaponContext->DefaultCameraPosition;
+		DefaultSpringArmLength = CurrentWeaponContext->DefaultSpringArmLength;
+		DefaultFOV = CurrentWeaponContext->DefaultFOV;
+		
+		AimingCameraPosition = CurrentWeaponContext->AimingCameraPosition;
+		AimingSpringArmLength = CurrentWeaponContext->AimingSpringArmLength;
+		AimingFOV = CurrentWeaponContext->AimingFOV;
+		
+		// RTSAmmoSet 세팅.
+		RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetMaxAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
+		RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetCurrentAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
 	}
-
-	// LeaderPose 다시 설정.
-	SetLeaderPoseComponent();
-
-	// 처리 끝났으면 CurrentWeapon 갱신.
-	CurrentWeaponContext = NewWeaponContext;
-
-	// 무기 Enum 변경.
-	CurrentWeaponType = NewWeaponContext->WeaponType;
-	OnWeaponTypeChanged.Broadcast(CurrentWeaponType);
-
-	DefaultCameraPosition = CurrentWeaponContext->DefaultCameraPosition;
-	DefaultSpringArmLength = CurrentWeaponContext->DefaultSpringArmLength;
-	DefaultFOV = CurrentWeaponContext->DefaultFOV;
-
-	AimingCameraPosition = CurrentWeaponContext->AimingCameraPosition;
-	AimingSpringArmLength = CurrentWeaponContext->AimingSpringArmLength;
-	AimingFOV = CurrentWeaponContext->AimingFOV;
-
-	// RTSAmmoSet 세팅.
-	RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetMaxAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
-	RTSASC->SetNumericAttributeBase(URTSAmmoSet::GetCurrentAmmoAttribute(), CurrentWeaponContext->MaxAmmo);
 }
 
 void ARTSCharacterPlayer::OnRep_CurrentWeaponType()

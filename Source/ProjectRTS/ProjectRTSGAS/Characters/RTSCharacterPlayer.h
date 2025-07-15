@@ -55,8 +55,9 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	void InitializePlayerInput(UInputComponent* PlayerInputComponent);
 	void InitializeWeapon();
-	
-	// bool TraceToCrosshair(FHitResult& OutHitResult, float InTraceDistance, ECollisionChannel InTraceChannel, bool bUseShotSpread = false);
+
+	virtual void OnRep_Controller() override;
+	virtual void OnRep_PlayerState() override;
 
 protected:
 	// SkeletalMesh SetLeaderPoseComponent.
