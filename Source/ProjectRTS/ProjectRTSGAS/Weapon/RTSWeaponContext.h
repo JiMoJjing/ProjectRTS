@@ -22,6 +22,24 @@ enum class EWeaponType : uint8
 	EWT_Weapon_Max = 5 UMETA(DisplayName = "Max", Hidden)
 };
 
+USTRUCT(BlueprintType)
+struct FFireRecoil
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float YawMin = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float YawMax = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float PitchMin = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float PitchMax = 0.0f;
+};
+
 /**
  * 
  */
@@ -36,6 +54,33 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Weapon")
 	uint8 MaxAmmo = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Weapon")
+	TObjectPtr<UAnimMontage> ReloadMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Weapon")
+	float WeaponDamage = 10.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Camera")
+	float DefaultFOV = 120.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Camera")
+	float AimingFOV = 75.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Camera")
+	FVector DefaultCameraPosition = FVector(0.0f, 160.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Camera")
+	FVector AimingCameraPosition = FVector(0.0f, 80.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Camera")
+	float DefaultSpringArmLength = 300.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Camera")
+	float AimingSpringArmLength = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Camera")
+	FFireRecoil FireRecoil;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Mesh")
 	TObjectPtr<USkeletalMesh> WeaponMesh;
@@ -69,5 +114,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Niagara")
 	TSubclassOf<AFireEffect> FireEffectActorClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Texture")
+	TObjectPtr<UTexture> WeaponIconTexture;
 	
 };

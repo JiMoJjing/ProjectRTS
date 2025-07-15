@@ -23,6 +23,7 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnWeaponTypeChanged, EWeaponType);
 
 /**
  * Author		: 지용현
@@ -75,6 +76,12 @@ protected:
 	UFUNCTION()
 	void AimingUpdate(float Alpha) const;
 
+	UFUNCTION()
+	void RecoilUpdate(float Alpha);
+
+	UFUNCTION()
+	void RecoilFinish();
+
 public:
 	// Player Rotation Settings.
 	void UseControlRotation();
@@ -91,13 +98,29 @@ public:
 	
 	void SpawnFireEffectActor(TArray<FVector>& InImpactPositions, TArray<FVector>& InImpactNormals);
 
+	FVector VRandConeNormalDistribution(const FVector& Direction, const float ConeHalfAngleRad, const float Exponent);
+
+	UFUNCTION(BlueprintCallable)
+	EWeaponType GetCurrentWeaponType() const { return CurrentWeaponType; }
+
+	void StartFireRecoil();
+	
 protected:
 	// AbilitySet 등록.
 	void RegisterAbilitySet();
 
 public:
+	void WeaponSwapAbilitySuccess(uint8 InWeaponIndex);
+	
 	UFUNCTION()
 	void OnRep_CurrentWeaponType();
+
+	URTSWeaponContext* GetCurrentWeaponContext() const { return CurrentWeaponContext; }
+	URTSWeaponContext* GetWeaponContextByIndex(uint8 Index) const;
+
+	void OnAmmoChangedCallback(float InCurrentAmmo, float InMaxAmmo);
+
+	FOnWeaponTypeChanged OnWeaponTypeChanged;
 
 protected:
 	// SkeletalMesh =====================================================
@@ -124,6 +147,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float DefaultFOV = 120.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float AimingFOV = 75.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float DefaultSpringArmLength = 300.0f;
@@ -157,7 +186,7 @@ protected:
 	// ~GameplayAbilitySystem ============================
 
 	
-	// Aiming Timeline.
+	// Aiming Timeline ==============================
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timeline, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCurveFloat> AimingTimelineCurveFloat;
 
@@ -168,6 +197,26 @@ protected:
 	FTimeline AimingTimeline;
 
 	FOnTimelineFloat OnAimingTimelineFloat;
+	// ~Aiming Timeline =============================
+
+	// Recoil Timeline ==============================
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timeline, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCurveFloat> RecoilTimelineCurveFloat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timeline, meta = (AllowPrivateAccess = "true"))
+	float RecoilTimelineLength = 0.15f;
+
+	UPROPERTY()
+	FTimeline RecoilTimeline;
+
+	FOnTimelineFloat OnRecoilTimelineFloat;
+
+	UPROPERTY()
+	float RecoilAddYaw = 0.0f;
+	
+	UPROPERTY()
+	float RecoilAddPitch = 0.0f;
+	// ~Recoil Timeline =============================
 
 	// Movement Variable.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
@@ -184,12 +233,19 @@ protected:
 	UPROPERTY()
 	TObjectPtr<URTSWeaponContext> CurrentWeaponContext;
 
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentWeaponType)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentWeaponType)
 	EWeaponType CurrentWeaponType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|WeaponContext")
 	TMap<uint8, TObjectPtr<URTSWeaponContext>> WeaponContexts;
-
+	
 	UPROPERTY()
 	TObjectPtr<AFireEffect> FireEffectActor;
+
+	// Reload.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|Reload", meta = (Categories = "InputTag"))
+	FGameplayTag ReloadInputTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|WeaponSwap", meta = (Categories = "InputTag"))
+	FGameplayTag WeaponSwapInputTag;
 };

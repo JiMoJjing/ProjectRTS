@@ -38,6 +38,7 @@ void URTSAttributeSet::OnRep_Health(const FGameplayAttributeData& OldValue)
 	const float EstimatedMagnitude = CurrentHealth - OldValue.GetCurrentValue();
 
 	OnHealthChanged.Broadcast(nullptr, nullptr, nullptr, EstimatedMagnitude, OldValue.GetCurrentValue(), CurrentHealth);
+	OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
 
 	if (!bOutOfHealth && CurrentHealth <= 0.0f)
 	{
@@ -52,6 +53,7 @@ void URTSAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue)
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URTSAttributeSet, MaxHealth, OldValue);
 
 	OnMaxHealthChanged.Broadcast(nullptr, nullptr, nullptr, GetMaxHealth() - OldValue.GetCurrentValue(), OldValue.GetCurrentValue(), GetMaxHealth());
+	OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
 }
 
 bool URTSAttributeSet::PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data)
@@ -94,10 +96,12 @@ void URTSAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMod
 	if (GetMaxHealth() != MaxHealthBeforeAttributeChange)
 	{
 		OnMaxHealthChanged.Broadcast(EffectInstigator, EffectCauser, &Data.EffectSpec, Data.EvaluatedData.Magnitude, MaxHealthBeforeAttributeChange, GetMaxHealth());
+		OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
 	}
 	if (GetHealth() != HealthBeforeAttributeChange)
 	{
 		OnHealthChanged.Broadcast(EffectInstigator, EffectCauser, &Data.EffectSpec, Data.EvaluatedData.Magnitude, HealthBeforeAttributeChange, GetHealth());
+		OnHPChanged.Broadcast(GetHealth(), GetMaxHealth());
 	}
 
 	if (GetHealth() <= 0.0f && !bOutOfHealth)
@@ -129,9 +133,11 @@ void URTSAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, 
 	{
 		if (GetHealth() > NewValue)
 		{
-			URTSAbilitySystemComponent* ASC = GetRTSAbilitySystemComponent();
-			check(ASC);
-
+			UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
+			if (!ASC)
+			{
+				return;
+			}
 			ASC->ApplyModToAttribute(GetHealthAttribute(), EGameplayModOp::Override, NewValue);
 		}
 	}

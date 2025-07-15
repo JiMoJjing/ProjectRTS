@@ -17,41 +17,41 @@ UDamageNiagaraComponent::UDamageNiagaraComponent(const FObjectInitializer& Objec
 
 	NiagaraArrayName = TEXT("DamageInfo");
 	NiagaraBoolName = TEXT("Critical");
+	NiagaraVec2Name = TEXT("SpriteSize");
 }
 
 
 void UDamageNiagaraComponent::AddDamageNiagaraEffect(const FVector& WorldLocation, const int32 Number, const bool bIsCriticalDamage)
 {
 	int32 LocalNumber = Number;
+	FVector2D SpriteSize = FVector2D(80.0f, 50.0f);
 	if (bIsCriticalDamage)
 	{
-		LocalNumber *= -1;
+		SpriteSize *= 1.6f;
 	}
 	
-	if (!NiagaraComponent)
+	// if (!NiagaraComponent)
+	// {
+	// 	if (DamageNiagaraSystem)
+	// 	{
+	// 		NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetOwner(), DamageNiagaraSystem, WorldLocation, FRotator::ZeroRotator, FVector(1));
+	// 	}
+	// 	NiagaraComponent->SetupAttachment(nullptr);
+	// 	check(NiagaraComponent);
+	// }
+
+	if (DamageNiagaraSystem)
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("NiagaraComponent Created"));
-		if (DamageNiagaraSystem)
-		{
-			NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetOwner(), DamageNiagaraSystem, WorldLocation, FRotator::ZeroRotator, FVector(1));
-		}
-		NiagaraComponent->SetupAttachment(nullptr);
-		check(NiagaraComponent);
+		NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetOwner(), DamageNiagaraSystem, WorldLocation, FRotator::ZeroRotator, FVector(1));
 	}
+	NiagaraComponent->SetupAttachment(nullptr);
 	
 	NiagaraComponent->Activate(false);
 	NiagaraComponent->SetWorldLocation(WorldLocation);
 	
-	// UE_LOG(LogTemp, Warning, TEXT("NiagaraComponent Valid: %s"), NiagaraComponent ? TEXT("True") : TEXT("False"));
-	// UE_LOG(LogTemp, Warning, TEXT("NiagaraSystem Valid: %s"), DamageNiagaraSystem ? TEXT("True") : TEXT("False"));
-	// UE_LOG(LogTemp, Warning, TEXT("Component Location: %s"), *NiagaraComponent->GetComponentLocation().ToString());
-	// UE_LOG(LogTemp, Warning, TEXT("Component IsActive: %s"), NiagaraComponent->IsActive() ? TEXT("True") : TEXT("False"));
-    
-
-	
-	NiagaraComponent->SetBoolParameter(NiagaraBoolName, true);
+	NiagaraComponent->SetBoolParameter(NiagaraBoolName, bIsCriticalDamage);
+	NiagaraComponent->SetVariableVec2(NiagaraVec2Name, SpriteSize);
 	TArray<FVector4> DamageList = UNiagaraDataInterfaceArrayFunctionLibrary::GetNiagaraArrayVector4(NiagaraComponent, NiagaraArrayName);
-	DamageList.Add(FVector4(WorldLocation.X, WorldLocation.Y, WorldLocation.Z, LocalNumber * -1));
+	DamageList.Add(FVector4(WorldLocation.X, WorldLocation.Y, WorldLocation.Z, LocalNumber));
 	UNiagaraDataInterfaceArrayFunctionLibrary::SetNiagaraArrayVector4(NiagaraComponent, NiagaraArrayName, DamageList);
-	// UE_LOG(LogTemp, Warning, TEXT("Array Size After: %d"), DamageList.Num());
 }

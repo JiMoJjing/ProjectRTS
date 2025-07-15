@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "RTSPlayerController.generated.h"
 
+class URTSHUD;
 class UDamageNiagaraComponent;
 class URTSAbilitySystemComponent;
 class ARTSPlayerState;
@@ -28,9 +29,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "RTS|PlayerController")
 	URTSAbilitySystemComponent* GetRTSAbilitySystemComponent() const;
 
+	virtual void OnPossess(APawn* InPawn) override;
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RTS|HUD")
+	TSubclassOf<URTSHUD> RTSHUDClass;
+
+	UPROPERTY()
+	TObjectPtr<URTSHUD> RTSHUD;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UDamageNiagaraComponent> DamageNiagaraComponent;
 };

@@ -10,6 +10,7 @@ URTSAbilitySystemComponent::URTSAbilitySystemComponent(const FObjectInitializer&
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
 	InputHeldSpecHandles.Reset();
+
 }
 
 void URTSAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
@@ -46,7 +47,7 @@ void URTSAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag& Inp
 void URTSAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
 {
 	// @Pending: Input Blocked Tag 있으면 입력 막는 로직.
-	// if (HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked))
+	// if (HasMatchingGameplayTag(TAG_Gameplay_AbilityInputBlocked)
 	// {
 	// 	ClearAbilityInput();
 	// 	return;

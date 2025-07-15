@@ -5,7 +5,6 @@
 
 #include "AbilitySystemComponent.h"
 #include "RTSPlayerController.h"
-#include "ProjectRTS/ProjectRTS.h"
 #include "ProjectRTS/ProjectRTSGAS/Ability/RTSAbilitySystemComponent.h"
 #include "ProjectRTS/ProjectRTSGAS/Attribute/RTSAmmoSet.h"
 #include "ProjectRTS/ProjectRTSGAS/Attribute/RTSAttributeSet.h"
@@ -15,12 +14,14 @@ ARTSPlayerState::ARTSPlayerState(const FObjectInitializer& ObjectInitializer)
 {
 	AbilitySystemComponent = CreateDefaultSubobject<URTSAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	RTSAttributeSet = CreateDefaultSubobject<URTSAttributeSet>(TEXT("RTSAttributeSet"));
 	RTSAmmoSet = CreateDefaultSubobject<URTSAmmoSet>(TEXT("RTSAmmoSet"));
 
 	NetUpdateFrequency = 100.0f;
 }
+
 
 ARTSPlayerController* ARTSPlayerState::GetRTSPlayerController() const
 {
@@ -45,9 +46,8 @@ void ARTSPlayerState::PostInitializeComponents()
 
 	// @Why: GetPawn 이 Nullptr임.
 	AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
-	
 
-	// @Pending: 무슨 로직인지 아직 모르겠다.
+	/* @Pending: 무슨 로직인지 아직 모르겠다.
 	// UWorld* World = GetWorld();
 	// if (World && World->IsGameWorld() && World->GetNetMode() != NM_Client)
 	// {
@@ -56,5 +56,5 @@ void ARTSPlayerState::PostInitializeComponents()
 	// 	ULyraExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<ULyraExperienceManagerComponent>();
 	// 	check(ExperienceComponent);
 	// 	ExperienceComponent->CallOrRegister_OnExperienceLoaded(FOnLyraExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
-	// }
+	// }*/
 }
