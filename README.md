@@ -1,7 +1,7 @@
 <aside>
-💡
 
-## 프로젝트 개요
+
+## 💡ProjectRTS(Robot ThirdPerson Shooting)
 
 - **프로젝트 설명** : **GameplayAbilitySystem** 프레임 워크를 활용한 삼인칭 슈팅 게임입니다.
 - **제작 기간**     **:** 2025.05.19 ~ 2025.06.20
